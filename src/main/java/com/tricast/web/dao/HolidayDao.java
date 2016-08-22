@@ -10,14 +10,14 @@ import com.tricast.beans.Holiday;
  */
 public interface HolidayDao {
 
-	List<Holiday> getAllForAccount(long accountId) throws SQLException;
+	List<Holiday> getAllForAccount(Workspace workspace, long accountId) throws SQLException;
 
-	Holiday getById(long holidayId) throws SQLException;
+	Holiday getById(Workspace workspace, long holidayId) throws SQLException;
 
-	Long create(Holiday holiday, List<String> blockedDays) throws SQLException;
+	Long create(Workspace workspace, Holiday holiday, List<String> blockedDays) throws SQLException;
 
-	boolean deleteById(long holidayId) throws SQLException;
+	boolean deleteById(Workspace workspace, long holidayId) throws SQLException;
 
-	Long update(Holiday holiday) throws SQLException;
+	Long update(Workspace workspace, Holiday holiday) throws SQLException;
 
 }

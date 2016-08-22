@@ -1,6 +1,5 @@
 package com.tricast.web.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,29 +9,22 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.tricast.web.annotations.JdbcUnitOfWork;
+import com.tricast.web.annotations.JdbcTransaction;
 
 public class BlockedDaysDaoImpl implements BlockedDaysDao {
-	
-	private static final Logger log = LogManager.getLogger(BlockedDaysDao.class);
 
-	@Inject
-	Provider<Connection> connections;
+	private static final Logger log = LogManager.getLogger(BlockedDaysDao.class);
 
 	private static List<String> blockedDays = null;
 
 	@Override
-	@JdbcUnitOfWork(commit = false)
-	public List<String> getBlockedDays() {
+	@JdbcTransaction
+	public List<String> getBlockedDays(Workspace workspace) {
 		if (blockedDays == null) {
-			Connection con = connections.get();
 
 			blockedDays = new ArrayList<String>();
 
-			try (PreparedStatement ps = con
-					.prepareStatement("SELECT DAY FROM CALENDAR.BLOCKEDDAYS");
+			try (PreparedStatement ps = workspace.getPreparedStatement("SELECT DAY FROM CALENDAR.BLOCKEDDAYS");
 					ResultSet rs = ps.executeQuery()) {
 
 				while (rs.next()) {

@@ -20,6 +20,8 @@ import org.apache.log4j.Logger;
 import com.tricast.beans.Account;
 import com.tricast.beans.LoginRequest;
 import com.tricast.web.dao.OutOfTransactionException;
+import com.tricast.web.dao.Workspace;
+import com.tricast.web.dao.WorkspaceImpl;
 import com.tricast.web.manager.AccountManager;
 
 /**
@@ -28,14 +30,16 @@ import com.tricast.web.manager.AccountManager;
 @Path("accounts")
 public class AccountService extends LVSResource {
 
-	private static final Logger log = LogManager
-			.getLogger(AccountService.class);
+	private static final Logger log = LogManager.getLogger(AccountService.class);
 
 	private final AccountManager manager;
 
+	private Workspace workspace;
+
 	@Inject
-	public AccountService(AccountManager manager) {
+	public AccountService(AccountManager manager, WorkspaceImpl workspace) {
 		this.manager = manager;
+		this.workspace = workspace;
 	}
 
 	@GET
@@ -43,7 +47,7 @@ public class AccountService extends LVSResource {
 	public Response getAll() throws SQLException, OutOfTransactionException {
 		log.trace("Requested to get All");
 		try {
-			return respondGet(manager.getAll());
+			return respondGet(manager.getAll(workspace));
 		} catch (SQLException ex) {
 			return respondGet(ex.getMessage(), 500);
 		}
@@ -52,11 +56,10 @@ public class AccountService extends LVSResource {
 	@GET
 	@Path("{id}")
 	@Produces(APPLICATION_JSON)
-	public Response getById(@PathParam("id") long id) throws SQLException,
-			OutOfTransactionException {
+	public Response getById(@PathParam("id") long id) throws SQLException, OutOfTransactionException {
 		log.trace("Requested to get ID = " + id);
 		try {
-			return respondGet(manager.getById(id));
+			return respondGet(manager.getById(workspace, id));
 		} catch (SQLException ex) {
 
 			return respondGet(ex.getMessage(), 500);
@@ -66,12 +69,10 @@ public class AccountService extends LVSResource {
 	@POST
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
-	public Response createAccount(Account newAccount) throws SQLException,
-			OutOfTransactionException {
-		log.trace("Trying to create new account for "
-				+ newAccount.getRealName());
+	public Response createAccount(Account newAccount) throws SQLException, OutOfTransactionException {
+		log.trace("Trying to create new account for " + newAccount.getRealName());
 		try {
-			return respondPost(manager.create(newAccount), "\\accounts");
+			return respondPost(manager.create(workspace, newAccount), "\\accounts");
 		} catch (SQLException ex) {
 			return respondPost(ex.getMessage(), "\\accounts", 500);
 		}
@@ -80,11 +81,10 @@ public class AccountService extends LVSResource {
 	@PUT
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
-	public Response updateAccount(Account updateAccount) throws SQLException,
-			OutOfTransactionException {
+	public Response updateAccount(Account updateAccount) throws SQLException, OutOfTransactionException {
 		log.trace("Trying to update account for " + updateAccount.getRealName());
 		try {
-			return respondPut(manager.update(updateAccount));
+			return respondPut(manager.update(workspace, updateAccount));
 		} catch (SQLException ex) {
 			return respondPut(ex.getMessage(), 500);
 		}
@@ -94,14 +94,11 @@ public class AccountService extends LVSResource {
 	@Path("/login")
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
-	public Response login(LoginRequest loginRequest) throws SQLException,
-			OutOfTransactionException {
-		log.trace("Trying to login with account for "
-				+ loginRequest.getUserName());
+	public Response login(LoginRequest loginRequest) throws SQLException, OutOfTransactionException {
+		log.trace("Trying to login with account for " + loginRequest.getUserName());
 		try {
-			return respondPost(
-					manager.login(loginRequest.getUserName(),
-							loginRequest.getPassword()), "\\accounts\\login");
+			return respondPost(manager.login(workspace, loginRequest.getUserName(), loginRequest.getPassword()),
+					"\\accounts\\login");
 		} catch (SQLException ex) {
 			return respondPost(ex.getMessage(), "\\accounts\\login", 500);
 		}

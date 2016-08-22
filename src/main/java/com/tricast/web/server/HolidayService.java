@@ -20,6 +20,8 @@ import org.apache.log4j.Logger;
 
 import com.tricast.beans.Holiday;
 import com.tricast.web.dao.OutOfTransactionException;
+import com.tricast.web.dao.Workspace;
+import com.tricast.web.dao.WorkspaceImpl;
 import com.tricast.web.manager.HolidayManager;
 
 /**
@@ -28,74 +30,76 @@ import com.tricast.web.manager.HolidayManager;
 @Path("holidays")
 public class HolidayService extends LVSResource {
 
-    private static final Logger log = LogManager.getLogger(HolidayService.class);
+	private static final Logger log = LogManager.getLogger(HolidayService.class);
 
-    private final HolidayManager manager;
+	private final HolidayManager manager;
+	private Workspace workspace;
 
-    @Inject
-    public HolidayService(HolidayManager manager) {
-        this.manager = manager;
-    }
+	@Inject
+	public HolidayService(HolidayManager manager, WorkspaceImpl workspace) {
+		this.manager = manager;
+		this.workspace = workspace;
+	}
 
-    @GET
-    @Produces(APPLICATION_JSON)
-    public Response getHolidays() throws OutOfTransactionException {
-        log.trace("Trying to get all holidays");
-        try {
-            return respondGet(manager.getAllHolidays());
-        } catch (SQLException ex) {
-            return respondGet(ex.getMessage(), 500);
-        }
-    }
+	@GET
+	@Produces(APPLICATION_JSON)
+	public Response getHolidays() throws OutOfTransactionException {
+		log.trace("Trying to get all holidays");
+		try {
+			return respondGet(manager.getAllHolidays(workspace));
+		} catch (SQLException ex) {
+			return respondGet(ex.getMessage(), 500);
+		}
+	}
 
-    @GET
-    @Path("{id}")
-    @Produces(APPLICATION_JSON)
-    public Response getById(@PathParam("id") long id) throws SQLException, OutOfTransactionException {
-        log.trace("Requested to get ID = " + id);
-        try {
-            return respondGet(manager.getById(id));
-        } catch (SQLException ex) {
+	@GET
+	@Path("{id}")
+	@Produces(APPLICATION_JSON)
+	public Response getById(@PathParam("id") long id) throws SQLException, OutOfTransactionException {
+		log.trace("Requested to get ID = " + id);
+		try {
+			return respondGet(manager.getById(workspace, id));
+		} catch (SQLException ex) {
 
-            return respondGet(ex.getMessage(), 500);
-        }
-    }
+			return respondGet(ex.getMessage(), 500);
+		}
+	}
 
-    @POST
-    @Produces(APPLICATION_JSON)
-    @Consumes(APPLICATION_JSON)
-    public Response createHoliday(Holiday holiday) throws OutOfTransactionException {
-        log.trace("Trying to create new holiday for account #" + holiday.getAccountId());
-        try {
-            return respondPost(manager.createHoliday(holiday), "\\holidays");
-        } catch (SQLException ex) {
-            return respondPost(ex.getMessage(), "\\holidays", 500);
-        }
-    }
+	@POST
+	@Produces(APPLICATION_JSON)
+	@Consumes(APPLICATION_JSON)
+	public Response createHoliday(Holiday holiday) throws OutOfTransactionException {
+		log.trace("Trying to create new holiday for account #" + holiday.getAccountId());
+		try {
+			return respondPost(manager.createHoliday(workspace, holiday), "\\holidays");
+		} catch (SQLException ex) {
+			return respondPost(ex.getMessage(), "\\holidays", 500);
+		}
+	}
 
-    @PUT
-    @Produces(APPLICATION_JSON)
-    @Consumes(APPLICATION_JSON)
-    public Response updateHoliday(Holiday holiday) throws SQLException, OutOfTransactionException {
-        log.trace("Trying to update a holiday for account #" + holiday.getAccountId());
-        try {
-            return respondPut(manager.updateHoliday(holiday));
-        } catch (SQLException ex) {
-            return respondPut(ex.getMessage(), 500);
-        }
-    }
+	@PUT
+	@Produces(APPLICATION_JSON)
+	@Consumes(APPLICATION_JSON)
+	public Response updateHoliday(Holiday holiday) throws SQLException, OutOfTransactionException {
+		log.trace("Trying to update a holiday for account #" + holiday.getAccountId());
+		try {
+			return respondPut(manager.updateHoliday(workspace, holiday));
+		} catch (SQLException ex) {
+			return respondPut(ex.getMessage(), 500);
+		}
+	}
 
-    @DELETE
-    @Path("{id}")
-    @Produces(APPLICATION_JSON)
-    @Consumes(APPLICATION_JSON)
-    public Response deleteHoliday(@PathParam("id") long id) throws SQLException, OutOfTransactionException {
-        log.trace("Trying to delete holiday #" + id);
-        try {
-            return respondDelete(manager.deleteHoliday(id));
-        } catch (SQLException ex) {
-            return respondDeleteNotOK(ex.getMessage(), null, 500);
-        }
-    }
+	@DELETE
+	@Path("{id}")
+	@Produces(APPLICATION_JSON)
+	@Consumes(APPLICATION_JSON)
+	public Response deleteHoliday(@PathParam("id") long id) throws SQLException, OutOfTransactionException {
+		log.trace("Trying to delete holiday #" + id);
+		try {
+			return respondDelete(manager.deleteHoliday(workspace, id));
+		} catch (SQLException ex) {
+			return respondDeleteNotOK(ex.getMessage(), null, 500);
+		}
+	}
 
 }

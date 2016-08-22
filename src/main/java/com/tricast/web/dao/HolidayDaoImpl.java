@@ -1,6 +1,5 @@
 package com.tricast.web.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,28 +10,22 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.tricast.beans.Holiday;
 import com.tricast.beans.HolidayType;
-import com.tricast.web.annotations.JdbcUnitOfWork;
+import com.tricast.web.annotations.JdbcTransaction;
 import com.tricast.web.helpers.HolidayHelper;
 
 public class HolidayDaoImpl implements HolidayDao {
 
 	private static final Logger log = LogManager.getLogger(HolidayDaoImpl.class);
 
-	@Inject
-	Provider<Connection> connections;
-
 	@Override
-	@JdbcUnitOfWork(commit = false)
-	public List<Holiday> getAllForAccount(long accountId) throws SQLException {
-		Connection con = connections.get();
+	@JdbcTransaction
+	public List<Holiday> getAllForAccount(Workspace workspace, long accountId) throws SQLException {
 
 		List<Holiday> result = new ArrayList<Holiday>();
 
-		try (PreparedStatement ps = con.prepareStatement(
+		try (PreparedStatement ps = workspace.getPreparedStatement(
 				"SELECT ID, ACCOUNTID, FROMDAY, TODAY, TYPE, ACTUALDAYCOUNT FROM CALENDAR.HOLIDAYS WHERE ACCOUNTID="
 						+ accountId + " AND FROMDAY::int > date_part('year', current_timestamp) * 10000");
 				ResultSet rs = ps.executeQuery()) {
@@ -49,13 +42,12 @@ public class HolidayDaoImpl implements HolidayDao {
 	}
 
 	@Override
-	@JdbcUnitOfWork(commit = false)
-	public Holiday getById(long holidayId) throws SQLException {
-		Connection con = connections.get();
+	@JdbcTransaction
+	public Holiday getById(Workspace workspace, long holidayId) throws SQLException {
 
 		Holiday result = null;
 
-		try (PreparedStatement ps = con.prepareStatement(
+		try (PreparedStatement ps = workspace.getPreparedStatement(
 				"SELECT ID, ACCOUNTID, FROMDAY, TODAY, TYPE, ACTUALDAYCOUNT FROM CALENDAR.HOLIDAYS WHERE ID="
 						+ holidayId);
 				ResultSet rs = ps.executeQuery()) {
@@ -72,17 +64,16 @@ public class HolidayDaoImpl implements HolidayDao {
 	}
 
 	@Override
-	@JdbcUnitOfWork(commit = true)
-	public Long create(Holiday holiday, List<String> blockedDays) throws SQLException {
+	@JdbcTransaction
+	public Long create(Workspace workspace, Holiday holiday, List<String> blockedDays) throws SQLException {
 		holiday.setActualDayCount(HolidayHelper.getActualNumberOfDaysForLeave(holiday, blockedDays));
-		Connection con = connections.get();
 
 		Long result = null;
 		PreparedStatement ps = null;
 
 		try {
 
-			ps = con.prepareStatement(
+			ps = workspace.getPreparedStatement(
 					"INSERT INTO CALENDAR.HOLIDAYS (ID, ACCOUNTID, FROMDAY, TODAY, TYPE, ACTUALDAYCOUNT) VALUES (NEXTVAL('CALENDAR.SEQ_HOLIDAYS'), ?, ?, ?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
 			int i = 1;
@@ -108,16 +99,14 @@ public class HolidayDaoImpl implements HolidayDao {
 	}
 
 	@Override
-	@JdbcUnitOfWork(commit = true)
-	public Long update(Holiday holiday) throws SQLException {
-		Connection con = connections.get();
-
+	@JdbcTransaction
+	public Long update(Workspace workspace, Holiday holiday) throws SQLException {
 		Long result = null;
 		PreparedStatement ps = null;
 
 		try {
 
-			ps = con.prepareStatement("UPDATE CALENDAR.HOLIDAYS SET TYPE = ? WHERE ID = ?",
+			ps = workspace.getPreparedStatement("UPDATE CALENDAR.HOLIDAYS SET TYPE = ? WHERE ID = ?",
 					Statement.RETURN_GENERATED_KEYS);
 			int i = 1;
 			ps.setLong(i++, holiday.getType().getTypeId());
@@ -138,16 +127,14 @@ public class HolidayDaoImpl implements HolidayDao {
 	}
 
 	@Override
-	@JdbcUnitOfWork(commit = true)
-	public boolean deleteById(long holidayId) throws SQLException {
-		Connection con = connections.get();
-
+	@JdbcTransaction
+	public boolean deleteById(Workspace workspace, long holidayId) throws SQLException {
 		boolean result = false;
 		PreparedStatement ps = null;
 
 		try {
 
-			ps = con.prepareStatement("DELETE FROM CALENDAR.HOLIDAYS WHERE ID = ?");
+			ps = workspace.getPreparedStatement("DELETE FROM CALENDAR.HOLIDAYS WHERE ID = ?");
 			int i = 1;
 			ps.setLong(i++, holidayId);
 			int rows = ps.executeUpdate();

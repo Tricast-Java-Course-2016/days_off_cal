@@ -3,7 +3,6 @@ package com.tricast.web.dao;
 import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.any;
 
-import java.sql.Connection;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -16,7 +15,7 @@ import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
-import com.tricast.web.annotations.JdbcUnitOfWork;
+import com.tricast.web.annotations.JdbcTransaction;
 import com.tricast.web.manager.AccountManager;
 import com.tricast.web.manager.AccountManagerImpl;
 import com.tricast.web.manager.HolidayManager;
@@ -38,8 +37,9 @@ public class WebServiceModule extends JerseyServletModule {
 		// Bind the DataSource class to be provided by OracleDataSourceProvider
 		// in Singleton
 		bind(DataSource.class).toProvider(PostGreSQLDataSourceProvider.class).in(Singleton.class);
+		bind(WorkspaceImpl.class).toProvider(WorkspaceProvider.class);
 
-		// Binding certaion Interfaces to their Implementations. This can be
+		// Binding certain Interfaces to their Implementations. This can be
 		// easily modified for testing, to use Test Implementations
 		bind(AccountDao.class).to(AccountDaoImpl.class);
 		bind(AccountManager.class).to(AccountManagerImpl.class);
@@ -58,14 +58,11 @@ public class WebServiceModule extends JerseyServletModule {
 
 		// Creating the JdbcUnitOfWorkInterceptor and also stating that it is
 		// required to bind this class.
-		JdbcUnitOfWorkInterceptor jdbcUnitOfWorkInterceptor = new JdbcUnitOfWorkInterceptor();
-		requestInjection(jdbcUnitOfWorkInterceptor);
+		JdbcTransactionInterceptor jdbcTransactionInterceptor = new JdbcTransactionInterceptor();
+		requestInjection(jdbcTransactionInterceptor);
 
 		// Bind to intercept any calls annotated with JdbcUnitOfWork by
-		bindInterceptor(any(), annotatedWith(JdbcUnitOfWork.class), jdbcUnitOfWorkInterceptor);
-
-		// Bind all Connections to be provided by jdbcUnitOfWorkInterceptorpport
-		bind(Connection.class).toProvider(jdbcUnitOfWorkInterceptor);
+		bindInterceptor(any(), annotatedWith(JdbcTransaction.class), jdbcTransactionInterceptor);
 
 		for (Class<?> resource : rc.getClasses()) {
 			System.out.println("Binding resource: " + resource.getName());

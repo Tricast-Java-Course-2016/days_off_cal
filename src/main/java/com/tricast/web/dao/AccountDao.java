@@ -7,16 +7,16 @@ import com.tricast.beans.Account;
 
 public interface AccountDao {
 
-	List<Account> getAll() throws SQLException;
+	List<Account> getAll(Workspace workspace) throws SQLException;
 
-	Account getById(long id) throws SQLException;
+	Account getById(Workspace workspace, long id) throws SQLException;
 
-	Account login(String username, String password) throws SQLException;
+	Account login(Workspace workspace, String username, String password) throws SQLException;
 
-	Long create(Account newItem) throws SQLException;
+	Long create(Workspace workspace, Account newItem) throws SQLException;
 
-	Long update(Account updateItem) throws SQLException;
+	Long update(Workspace workspace, Account updateItem) throws SQLException;
 
-	boolean deleteById(long Id) throws SQLException;
+	boolean deleteById(Workspace workspace, long Id) throws SQLException;
 
 }

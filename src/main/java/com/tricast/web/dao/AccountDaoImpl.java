@@ -1,6 +1,5 @@
 package com.tricast.web.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,26 +10,20 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.tricast.beans.Account;
-import com.tricast.web.annotations.JdbcUnitOfWork;
+import com.tricast.web.annotations.JdbcTransaction;
 
 public class AccountDaoImpl implements AccountDao {
 
 	private static final Logger log = LogManager.getLogger(AccountDaoImpl.class);
 
-	@Inject
-	Provider<Connection> connections;
-
 	@Override
-	@JdbcUnitOfWork(commit = false)
-	public List<Account> getAll() throws SQLException {
-		Connection con = connections.get();
+	@JdbcTransaction
+	public List<Account> getAll(Workspace workspace) throws SQLException {
 
 		List<Account> result = new ArrayList<Account>();
 
-		try (PreparedStatement ps = con.prepareStatement(
+		try (PreparedStatement ps = workspace.getPreparedStatement(
 				"SELECT ID, USERNAME, REALNAME, DAYSOFFPERYEAR, SICKLEAVEPERYEAR FROM CALENDAR.ACCOUNTS");
 				ResultSet rs = ps.executeQuery()) {
 
@@ -46,13 +39,12 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	@JdbcUnitOfWork(commit = false)
-	public Account getById(long id) throws SQLException {
-		Connection con = connections.get();
+	@JdbcTransaction
+	public Account getById(Workspace workspace, long id) throws SQLException {
 
 		Account result = null;
 
-		try (PreparedStatement ps = con.prepareStatement(
+		try (PreparedStatement ps = workspace.getPreparedStatement(
 				"SELECT ID, USERNAME, REALNAME, PASSWORD, DAYSOFFPERYEAR, SICKLEAVEPERYEAR FROM CALENDAR.ACCOUNTS WHERE ID = ?")) {
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
@@ -69,13 +61,12 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	@JdbcUnitOfWork(commit = false)
-	public Account login(String username, String password) throws SQLException {
-		Connection con = connections.get();
+	@JdbcTransaction
+	public Account login(Workspace workspace, String username, String password) throws SQLException {
 
 		Account result = null;
 
-		try (PreparedStatement ps = con.prepareStatement(
+		try (PreparedStatement ps = workspace.getPreparedStatement(
 				"SELECT ID, USERNAME, REALNAME, DAYSOFFPERYEAR, SICKLEAVEPERYEAR FROM calendar.accounts WHERE USERNAME = ? AND PASSWORD = ?")) {
 
 			int i = 1;
@@ -95,16 +86,15 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	@JdbcUnitOfWork(commit = true)
-	public Long create(Account newItem) throws SQLException {
-		Connection con = connections.get();
+	@JdbcTransaction
+	public Long create(Workspace workspace, Account newItem) throws SQLException {
 
 		Long result = null;
 		PreparedStatement ps = null;
 
 		try {
 
-			ps = con.prepareStatement(
+			ps = workspace.getPreparedStatement(
 					"INSERT INTO calendar.accounts(ID, USERNAME, REALNAME, PASSWORD, DAYSOFFPERYEAR, SICKLEAVEPERYEAR) VALUES (NEXTVAL('calendar.seq_accounts'), ?, ?, ?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
 			int i = 1;
@@ -129,16 +119,15 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	@JdbcUnitOfWork(commit = true)
-	public Long update(Account updateItem) throws SQLException {
-		Connection con = connections.get();
+	@JdbcTransaction
+	public Long update(Workspace workspace, Account updateItem) throws SQLException {
 
 		Long result = null;
 		PreparedStatement ps = null;
 
 		try {
 
-			ps = con.prepareStatement(
+			ps = workspace.getPreparedStatement(
 					"UPDATE CALENDAR.ACCOUNTS SET REALNAME = ?, PASSWORD = ?, DAYSOFFPERYEAR = ?, SICKLEAVEPERYEAR = ? WHERE ID = ?",
 					Statement.RETURN_GENERATED_KEYS);
 			int i = 1;
@@ -163,16 +152,15 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	@JdbcUnitOfWork(commit = true)
-	public boolean deleteById(long Id) throws SQLException {
-		Connection con = connections.get();
+	@JdbcTransaction
+	public boolean deleteById(Workspace workspace, long Id) throws SQLException {
 
 		boolean result = false;
 		PreparedStatement ps = null;
 
 		try {
 
-			ps = con.prepareStatement("DELETE FROM CALENDAR.ACCOUNTS WHERE ID = ?");
+			ps = workspace.getPreparedStatement("DELETE FROM CALENDAR.ACCOUNTS WHERE ID = ?");
 			int i = 1;
 			ps.setLong(i++, Id);
 			int rows = ps.executeUpdate();
