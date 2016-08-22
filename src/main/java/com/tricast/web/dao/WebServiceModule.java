@@ -80,7 +80,7 @@ public class WebServiceModule extends JerseyServletModule {
 		Properties props = new Properties();
 		props.put("datasourceName", "PostGreSQL Portable DB");
 		props.put("serverName", "localhost");
-		props.put("portNumber", "5439");
+		props.put("portNumber", "5432");
 		props.put("databaseName", "postgres");
 		props.put("user", "postgres");
 		props.put("password", "password");
