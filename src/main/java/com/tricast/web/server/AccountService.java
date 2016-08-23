@@ -2,6 +2,7 @@ package com.tricast.web.server;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.inject.Inject;
@@ -18,11 +19,11 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.tricast.beans.Account;
-import com.tricast.beans.LoginRequest;
-import com.tricast.web.dao.OutOfTransactionException;
-import com.tricast.web.dao.Workspace;
-import com.tricast.web.dao.WorkspaceImpl;
+import com.tricast.database.Workspace;
+import com.tricast.database.WorkspaceImpl;
+import com.tricast.guice.OutOfTransactionException;
 import com.tricast.web.manager.AccountManager;
+import com.tricast.web.request.LoginRequest;
 
 /**
  * User: Renato
@@ -44,7 +45,7 @@ public class AccountService extends LVSResource {
 
 	@GET
 	@Produces(APPLICATION_JSON)
-	public Response getAll() throws SQLException, OutOfTransactionException {
+	public Response getAll() throws SQLException, OutOfTransactionException, IOException {
 		log.trace("Requested to get All");
 		try {
 			return respondGet(manager.getAll(workspace));
@@ -56,7 +57,7 @@ public class AccountService extends LVSResource {
 	@GET
 	@Path("{id}")
 	@Produces(APPLICATION_JSON)
-	public Response getById(@PathParam("id") long id) throws SQLException, OutOfTransactionException {
+	public Response getById(@PathParam("id") long id) throws SQLException, OutOfTransactionException, IOException {
 		log.trace("Requested to get ID = " + id);
 		try {
 			return respondGet(manager.getById(workspace, id));
@@ -69,7 +70,7 @@ public class AccountService extends LVSResource {
 	@POST
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
-	public Response createAccount(Account newAccount) throws SQLException, OutOfTransactionException {
+	public Response createAccount(Account newAccount) throws SQLException, OutOfTransactionException, IOException {
 		log.trace("Trying to create new account for " + newAccount.getRealName());
 		try {
 			return respondPost(manager.create(workspace, newAccount), "\\accounts");
@@ -81,7 +82,7 @@ public class AccountService extends LVSResource {
 	@PUT
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
-	public Response updateAccount(Account updateAccount) throws SQLException, OutOfTransactionException {
+	public Response updateAccount(Account updateAccount) throws SQLException, OutOfTransactionException, IOException {
 		log.trace("Trying to update account for " + updateAccount.getRealName());
 		try {
 			return respondPut(manager.update(workspace, updateAccount));
@@ -94,7 +95,7 @@ public class AccountService extends LVSResource {
 	@Path("/login")
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
-	public Response login(LoginRequest loginRequest) throws SQLException, OutOfTransactionException {
+	public Response login(LoginRequest loginRequest) throws SQLException, OutOfTransactionException, IOException {
 		log.trace("Trying to login with account for " + loginRequest.getUserName());
 		try {
 			return respondPost(manager.login(workspace, loginRequest.getUserName(), loginRequest.getPassword()),

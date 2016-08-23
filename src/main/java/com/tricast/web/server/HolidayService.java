@@ -2,6 +2,7 @@ package com.tricast.web.server;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.inject.Inject;
@@ -19,9 +20,9 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.tricast.beans.Holiday;
-import com.tricast.web.dao.OutOfTransactionException;
-import com.tricast.web.dao.Workspace;
-import com.tricast.web.dao.WorkspaceImpl;
+import com.tricast.database.Workspace;
+import com.tricast.database.WorkspaceImpl;
+import com.tricast.guice.OutOfTransactionException;
 import com.tricast.web.manager.HolidayManager;
 
 /**
@@ -43,7 +44,7 @@ public class HolidayService extends LVSResource {
 
 	@GET
 	@Produces(APPLICATION_JSON)
-	public Response getHolidays() throws OutOfTransactionException {
+	public Response getHolidays() throws OutOfTransactionException, IOException {
 		log.trace("Trying to get all holidays");
 		try {
 			return respondGet(manager.getAllHolidays(workspace));
@@ -55,7 +56,7 @@ public class HolidayService extends LVSResource {
 	@GET
 	@Path("{id}")
 	@Produces(APPLICATION_JSON)
-	public Response getById(@PathParam("id") long id) throws SQLException, OutOfTransactionException {
+	public Response getById(@PathParam("id") long id) throws SQLException, OutOfTransactionException, IOException {
 		log.trace("Requested to get ID = " + id);
 		try {
 			return respondGet(manager.getById(workspace, id));
@@ -68,7 +69,7 @@ public class HolidayService extends LVSResource {
 	@POST
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
-	public Response createHoliday(Holiday holiday) throws OutOfTransactionException {
+	public Response createHoliday(Holiday holiday) throws OutOfTransactionException, IOException {
 		log.trace("Trying to create new holiday for account #" + holiday.getAccountId());
 		try {
 			return respondPost(manager.createHoliday(workspace, holiday), "\\holidays");
@@ -80,7 +81,7 @@ public class HolidayService extends LVSResource {
 	@PUT
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
-	public Response updateHoliday(Holiday holiday) throws SQLException, OutOfTransactionException {
+	public Response updateHoliday(Holiday holiday) throws SQLException, OutOfTransactionException, IOException {
 		log.trace("Trying to update a holiday for account #" + holiday.getAccountId());
 		try {
 			return respondPut(manager.updateHoliday(workspace, holiday));
@@ -93,7 +94,8 @@ public class HolidayService extends LVSResource {
 	@Path("{id}")
 	@Produces(APPLICATION_JSON)
 	@Consumes(APPLICATION_JSON)
-	public Response deleteHoliday(@PathParam("id") long id) throws SQLException, OutOfTransactionException {
+	public Response deleteHoliday(@PathParam("id") long id)
+			throws SQLException, OutOfTransactionException, IOException {
 		log.trace("Trying to delete holiday #" + id);
 		try {
 			return respondDelete(manager.deleteHoliday(workspace, id));

@@ -1,7 +1,9 @@
-package com.tricast.web.dao;
+package com.tricast.guice;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+
+import com.tricast.database.WorkspaceImpl;
 
 public class JdbcTransactionInterceptor implements MethodInterceptor {
 

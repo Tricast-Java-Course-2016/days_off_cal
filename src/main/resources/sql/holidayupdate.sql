@@ -1,0 +1,6 @@
+UPDATE 
+	/*=SCHEMA*/HOLIDAYS 
+SET 
+	TYPE = :type 
+WHERE 
+	ID = :id

@@ -1,9 +1,10 @@
-package com.tricast.web.dao;
+package com.tricast.guice;
 
 import javax.sql.DataSource;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.tricast.database.WorkspaceImpl;
 
 public class WorkspaceProvider implements Provider<WorkspaceImpl> {
 

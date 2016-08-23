@@ -1,4 +1,4 @@
-package com.tricast.web.dao;
+package com.tricast.guice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;

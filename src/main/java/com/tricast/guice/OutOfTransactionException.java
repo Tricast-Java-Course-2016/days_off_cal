@@ -1,4 +1,4 @@
-package com.tricast.web.dao;
+package com.tricast.guice;
 
 public class OutOfTransactionException extends RuntimeException {
 

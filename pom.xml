@@ -109,4 +109,9 @@
 		
 	</dependencies>	
 
+	<name>Days Off Calendar</name>
+	<organization>
+		<name>Tricast</name>
+		<url>tricast.hu</url>
+	</organization>
 </project>

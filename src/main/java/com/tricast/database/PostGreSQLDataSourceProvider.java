@@ -1,4 +1,4 @@
-package com.tricast.web.dao;
+package com.tricast.database;
 
 import javax.sql.DataSource;
 

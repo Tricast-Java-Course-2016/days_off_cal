@@ -1,5 +1,6 @@
 package com.tricast.web.dao;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,21 +12,24 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.tricast.beans.Account;
+import com.tricast.database.SqlManager;
+import com.tricast.database.Workspace;
 import com.tricast.web.annotations.JdbcTransaction;
 
 public class AccountDaoImpl implements AccountDao {
 
 	private static final Logger log = LogManager.getLogger(AccountDaoImpl.class);
+	private static final SqlManager sqlManager = SqlManager.getInstance();
 
 	@Override
 	@JdbcTransaction
-	public List<Account> getAll(Workspace workspace) throws SQLException {
+	public List<Account> getAll(Workspace workspace) throws SQLException, IOException {
 
 		List<Account> result = new ArrayList<Account>();
 
-		try (PreparedStatement ps = workspace.getPreparedStatement(
-				"SELECT ID, USERNAME, REALNAME, DAYSOFFPERYEAR, SICKLEAVEPERYEAR FROM CALENDAR.ACCOUNTS");
-				ResultSet rs = ps.executeQuery()) {
+		String sql = sqlManager.get("accountgetall.sql");
+
+		try (PreparedStatement ps = workspace.getPreparedStatement(sql); ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
 				result.add(buildAccount(rs, false));
@@ -40,14 +44,16 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	@JdbcTransaction
-	public Account getById(Workspace workspace, long id) throws SQLException {
+	public Account getById(Workspace workspace, long id) throws SQLException, IOException {
 
 		Account result = null;
+		ResultSet rs = null;
 
-		try (PreparedStatement ps = workspace.getPreparedStatement(
-				"SELECT ID, USERNAME, REALNAME, PASSWORD, DAYSOFFPERYEAR, SICKLEAVEPERYEAR FROM CALENDAR.ACCOUNTS WHERE ID = ?")) {
+		String sql = sqlManager.get("accountgetbyid.sql");
+
+		try (PreparedStatement ps = workspace.getPreparedStatement(sql)) {
 			ps.setLong(1, id);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 
 			if (rs.next()) {
 				result = buildAccount(rs, true);
@@ -56,23 +62,27 @@ public class AccountDaoImpl implements AccountDao {
 		} catch (SQLException ex) {
 			log.error(ex, ex);
 			throw ex;
+		} finally {
+			rs.close();
 		}
 		return result;
 	}
 
 	@Override
 	@JdbcTransaction
-	public Account login(Workspace workspace, String username, String password) throws SQLException {
+	public Account login(Workspace workspace, String username, String password) throws SQLException, IOException {
 
 		Account result = null;
+		ResultSet rs = null;
 
-		try (PreparedStatement ps = workspace.getPreparedStatement(
-				"SELECT ID, USERNAME, REALNAME, DAYSOFFPERYEAR, SICKLEAVEPERYEAR FROM calendar.accounts WHERE USERNAME = ? AND PASSWORD = ?")) {
+		String sql = sqlManager.get("accountlogin.sql");
+
+		try (PreparedStatement ps = workspace.getPreparedStatement(sql)) {
 
 			int i = 1;
 			ps.setString(i++, username);
 			ps.setString(i++, password);
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 
 			if (rs.next()) {
 				result = buildAccount(rs, false);
@@ -81,22 +91,23 @@ public class AccountDaoImpl implements AccountDao {
 		} catch (SQLException ex) {
 			log.error(ex, ex);
 			throw ex;
+		} finally {
+			rs.close();
 		}
 		return result;
 	}
 
 	@Override
 	@JdbcTransaction
-	public Long create(Workspace workspace, Account newItem) throws SQLException {
+	public Long create(Workspace workspace, Account newItem) throws SQLException, IOException {
 
 		Long result = null;
-		PreparedStatement ps = null;
+		ResultSet rs = null;
 
-		try {
+		String sql = sqlManager.get("accountcreate.sql");
 
-			ps = workspace.getPreparedStatement(
-					"INSERT INTO calendar.accounts(ID, USERNAME, REALNAME, PASSWORD, DAYSOFFPERYEAR, SICKLEAVEPERYEAR) VALUES (NEXTVAL('calendar.seq_accounts'), ?, ?, ?, ?, ?)",
-					Statement.RETURN_GENERATED_KEYS);
+		try (PreparedStatement ps = workspace.getPreparedStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
 			int i = 1;
 			ps.setString(i++, newItem.getUserName());
 			ps.setString(i++, newItem.getRealName());
@@ -105,7 +116,7 @@ public class AccountDaoImpl implements AccountDao {
 			ps.setLong(i++, newItem.getSickLeavePerYear());
 			int rows = ps.executeUpdate();
 			if (rows > 0) {
-				ResultSet rs = ps.getGeneratedKeys();
+				rs = ps.getGeneratedKeys();
 				if (rs.next()) {
 					result = rs.getLong(1);
 				}
@@ -114,22 +125,22 @@ public class AccountDaoImpl implements AccountDao {
 		} catch (SQLException ex) {
 			log.error(ex, ex);
 			throw ex;
+		} finally {
+			rs.close();
 		}
 		return result;
 	}
 
 	@Override
 	@JdbcTransaction
-	public Long update(Workspace workspace, Account updateItem) throws SQLException {
+	public Long update(Workspace workspace, Account updateItem) throws SQLException, IOException {
 
 		Long result = null;
-		PreparedStatement ps = null;
+		ResultSet rs = null;
 
-		try {
+		String sql = sqlManager.get("accountupdate.sql");
 
-			ps = workspace.getPreparedStatement(
-					"UPDATE CALENDAR.ACCOUNTS SET REALNAME = ?, PASSWORD = ?, DAYSOFFPERYEAR = ?, SICKLEAVEPERYEAR = ? WHERE ID = ?",
-					Statement.RETURN_GENERATED_KEYS);
+		try (PreparedStatement ps = workspace.getPreparedStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 			int i = 1;
 			ps.setString(i++, updateItem.getRealName());
 			ps.setString(i++, updateItem.getPassword());
@@ -138,7 +149,7 @@ public class AccountDaoImpl implements AccountDao {
 			ps.setLong(i++, updateItem.getId());
 			int rows = ps.executeUpdate();
 			if (rows > 0) {
-				ResultSet rs = ps.getGeneratedKeys();
+				rs = ps.getGeneratedKeys();
 				if (rs.next()) {
 					result = rs.getLong(1);
 				}
@@ -147,20 +158,22 @@ public class AccountDaoImpl implements AccountDao {
 		} catch (SQLException ex) {
 			log.error(ex, ex);
 			throw ex;
+		} finally {
+			rs.close();
 		}
 		return result;
 	}
 
 	@Override
 	@JdbcTransaction
-	public boolean deleteById(Workspace workspace, long Id) throws SQLException {
+	public boolean deleteById(Workspace workspace, long Id) throws SQLException, IOException {
 
 		boolean result = false;
-		PreparedStatement ps = null;
 
-		try {
+		String sql = sqlManager.get("accountdeletebyid.sql");
 
-			ps = workspace.getPreparedStatement("DELETE FROM CALENDAR.ACCOUNTS WHERE ID = ?");
+		try (PreparedStatement ps = workspace.getPreparedStatement(sql)) {
+
 			int i = 1;
 			ps.setLong(i++, Id);
 			int rows = ps.executeUpdate();

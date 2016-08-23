@@ -1,4 +1,4 @@
-package com.tricast.web.dao;
+package com.tricast.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

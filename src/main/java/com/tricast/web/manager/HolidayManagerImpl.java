@@ -1,5 +1,6 @@
 package com.tricast.web.manager;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +9,11 @@ import javax.inject.Inject;
 
 import com.tricast.beans.Account;
 import com.tricast.beans.Holiday;
+import com.tricast.database.Workspace;
 import com.tricast.web.annotations.JdbcTransaction;
 import com.tricast.web.dao.AccountDao;
 import com.tricast.web.dao.BlockedDaysDao;
 import com.tricast.web.dao.HolidayDao;
-import com.tricast.web.dao.Workspace;
 import com.tricast.web.helpers.HolidayHelper;
 import com.tricast.web.response.HolidayResponse;
 
@@ -31,7 +32,7 @@ public class HolidayManagerImpl implements HolidayManager {
 
 	@Override
 	@JdbcTransaction
-	public Holiday createHoliday(Workspace workspace, Holiday holiday) throws SQLException {
+	public Holiday createHoliday(Workspace workspace, Holiday holiday) throws SQLException, IOException {
 		List<Holiday> currentHolidays = leaveDao.getAllForAccount(workspace, holiday.getAccountId());
 		if (!HolidayHelper.isOverlapping(currentHolidays, holiday)) {
 			Long leaveId = leaveDao.create(workspace, holiday, blockedDaysDao.getBlockedDays(workspace));
@@ -47,7 +48,7 @@ public class HolidayManagerImpl implements HolidayManager {
 
 	@Override
 	@JdbcTransaction
-	public Holiday updateHoliday(Workspace workspace, Holiday holiday) throws SQLException {
+	public Holiday updateHoliday(Workspace workspace, Holiday holiday) throws SQLException, IOException {
 		Long leaveId = leaveDao.update(workspace, holiday);
 		if (leaveId != null) {
 			return leaveDao.getById(workspace, leaveId);
@@ -58,13 +59,13 @@ public class HolidayManagerImpl implements HolidayManager {
 
 	@Override
 	@JdbcTransaction
-	public boolean deleteHoliday(Workspace workspace, long holidayId) throws SQLException {
+	public boolean deleteHoliday(Workspace workspace, long holidayId) throws SQLException, IOException {
 		return leaveDao.deleteById(workspace, holidayId);
 	}
 
 	@Override
 	@JdbcTransaction
-	public List<HolidayResponse> getAllHolidays(Workspace workspace) throws SQLException {
+	public List<HolidayResponse> getAllHolidays(Workspace workspace) throws SQLException, IOException {
 		List<Account> accounts = accountDao.getAll(workspace);
 		List<HolidayResponse> responses = new ArrayList<HolidayResponse>();
 		for (Account account : accounts) {
@@ -87,7 +88,7 @@ public class HolidayManagerImpl implements HolidayManager {
 
 	@Override
 	@JdbcTransaction
-	public Holiday getById(Workspace workspace, long id) throws SQLException {
+	public Holiday getById(Workspace workspace, long id) throws SQLException, IOException {
 		return leaveDao.getById(workspace, id);
 	}
 

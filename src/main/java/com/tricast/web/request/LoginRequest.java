@@ -1,4 +1,4 @@
-package com.tricast.beans;
+package com.tricast.web.request;
 
 import java.io.Serializable;
 
