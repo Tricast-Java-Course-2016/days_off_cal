@@ -9,4 +9,4 @@ FROM
 	/*=SCHEMA*/HOLIDAYS 
 WHERE 
 	ACCOUNTID=:accountId 
-	AND FROMDAY::int > date_part('year', current_timestamp) * 10000
+	AND CAST(FROMDAY AS integer) > date_part('year', current_timestamp) * 10000
