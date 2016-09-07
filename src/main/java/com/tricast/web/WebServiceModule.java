@@ -105,6 +105,14 @@ public class WebServiceModule extends JerseyServletModule {
             props.put("user", "postgres");
             props.put("password", "password");
         }
+        String dbUrl = System.getProperty("db.url");
+        if (dbUrl != null) {
+            props.put("serverName", dbUrl);
+        }
+        String dbPassword = System.getProperty("db.password");
+        if (dbPassword != null) {
+            props.put("password", dbPassword);
+        }
 
         return props;
     }
