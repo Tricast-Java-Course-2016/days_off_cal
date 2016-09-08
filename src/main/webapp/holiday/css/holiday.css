@@ -136,3 +136,7 @@ h2 {
 #newHolidayRow { 
     margin-bottom: 1em;
 }
+
+#welcomeMsg {
+	margin-left: 15px;
+}

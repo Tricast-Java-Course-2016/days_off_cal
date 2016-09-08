@@ -14,7 +14,8 @@ $(document).ready(function(){
 	//create the calendar object
 	createCalendar();
 	//assign actions to links and buttons
-	assignActions();	 
+	assignActions();
+	$("#saveInfoDiv2").addClass("hidden");
 });
 
 
@@ -89,10 +90,10 @@ function assignActions() {
 		
 	//--------Calendar functions-------
 	//assign actions to the calendar previous and next buttons
-	$('.fc-button-prev').click(function(){
+	$('.fc-prev-button').click(function(){
 		setEvents(holidays);
 	});
-	$('.fc-button-next').click(function(){
+	$('.fc-next-button').click(function(){
 		setEvents(holidays);
 	});	
 }
@@ -150,7 +151,6 @@ function getAccountParams() {
 	account.daysOffPerYear =  $("#daysOffPerYear").val();
 	account.sickLeavePerYear =  $("#sickLeavePerYear").val();
 	
-	console.log(account);
 	return account;
 }
 
@@ -180,44 +180,10 @@ function saveHoliday() {
 	sendAjax(method, url, JSON.stringify(holiday), 
 	 	function(data, textStatus, xhr ) {
 			selectedHolidayId = data.id;
-			
-			var url = "/days-off-calendar/services/holidays";
-			sendAjax("GET", url, null, 
-			 	function(data) {
-					holidays = data;
-					setEvents(data);
-//					$("#saveInfo").text("Succesfully saved");
-//					$("#saveInfo2").html("Succesfully saved");
-//					$("#saveInfoDiv").addClass("alert-success");
-//					$("#saveInfoDiv").removeClass("alert-danger");
-					console.log("Saved");
-				},
-				function(xhr) {
-//					$("#saveInfo").html(getErrorMsg(xhr));
-//					$("#saveInfoDiv").removeClass("alert-success");
-//					$("#saveInfoDiv").addClass("alert-danger");
-//					$("#saveInfo2").html(getErrorMsg(xhr));
-					console.log("Error");
-				}
-			);
-			
-			var url = "/days-off-calendar/services/accounts/" + loggedInAccount.id;
-			sendAjax("GET", url, null, 
-			 	function(data) {
-				setAccountInfo(data);
-				}, null
-			);
-			
-//			$("#saveInfo").text("Succesfully saved");
-//			$("#saveInfo2").html("Succesfully saved");
-//			$("#saveInfoDiv").addClass("alert-success");
-//			$("#saveInfoDiv").removeClass("alert-danger");
-			console.log("Saved");
+			reloadHolidayAndAccountData(false);
 		},
 		function(xhr) {
-			$("#saveInfo").html(getErrorMsg(xhr));
-			// $("#saveInfoDiv").removeClass("alert-success");
-			// $("#saveInfoDiv").addClass("alert-danger");
+			showSaveInfo(false, getErrorMsg(xhr), false);
 		}
 	);
 }
@@ -227,18 +193,7 @@ function deleteHoliday() {
 	var url = "/days-off-calendar/services/holidays/" + selectedHolidayId;
 	sendAjax(method, url, null, 
 	 	function(data, textStatus, xhr ) {
-			var url = "/days-off-calendar/services/holidays";
-			sendAjax("GET", url, null, 
-			 	function(data) {
-					holidays = data;
-					setEvents(data);
-					setHolidayParams(null);
-					$("#saveInfo").html("Succesfully deleted");
-				},
-				function(xhr) {
-					$("#saveInfo").html(getErrorMsg(xhr));
-				}
-			);			
+			reloadHolidayAndAccountData(true);
 		},
 		function(xhr) {
 			$("#saveInfo").html(getErrorMsg(xhr));
@@ -246,14 +201,58 @@ function deleteHoliday() {
 	);
 }
 
+function reloadHolidayAndAccountData(afterDelete) {
+	var url = "/days-off-calendar/services/holidays";
+	sendAjax("GET", url, null, 
+	 	function(data) {
+			holidays = data;
+			setEvents(data);
+			setHolidayParams(null);
+			showSaveInfo(true, null, afterDelete);
+		},
+		function(xhr) {
+			showSaveInfo(false, getErrorMsg(xhr), afterDelete);
+		}
+	);
+	var url = "/days-off-calendar/services/accounts/" + loggedInAccount.id;
+	sendAjax("GET", url, null, 
+	 	function(data) {
+			setAccountInfo(data);
+		}, null
+	);
+}
+
+function showSaveInfo(isSuccessfullySaved, errorMessage, deleteCall) {
+	var saveInfo = $("#saveInfoDiv");
+	var message;
+	if(isSuccessfullySaved) {
+		if(deleteCall) {
+			message = "Succesfully deleted";
+		} else {
+			message = "Succesfully saved";
+		}
+		saveInfo.addClass("alert-success");
+		saveInfo.removeClass("alert-danger");
+	} else {
+		message = errorMessage;
+		saveInfo.addClass("alert-danger");
+		saveInfo.removeClass("alert-success");
+	}
+	saveInfo.text(message);
+	
+	saveInfo.removeClass("hidden").fadeIn();
+	if(isSuccessfullySaved) {
+		saveInfo.delay(3000).fadeOut();
+	}		
+}
+
 function setHolidayParams(event) {
-	console.log(event);
 	if(event === null || event === undefined){
 		selectedHolidayId = null;
 		$("#holidayId").val("");
 		$("#fromDate").val("");
 		$("#toDate").val("");
-		$("#holidayType").val("");
+		$("#holidayType").val("DAYOFF");
 		$("#fromDate").prop("disabled", false);
 		$("#toDate").prop("disabled", false);
 	} else {
@@ -281,33 +280,13 @@ function getHolidayParams() {
 		
 	holiday.fromDay = moment($("#fromDate").val()).format(dateFormat);
 	holiday.toDay = moment($("#toDate").val()).format(dateFormat);
-	holiday.type = $("#holidayType").val();	
+	holiday.type = $("#holidayType").val();
 	
-	console.log(holiday);
 	return holiday;
 }
 
 
 //--------Calendar functions-------
-//function createCalendar() {	
-//	$('#calendar').fullCalendar({
-//		eventClick: function(event) {
-//			setHolidayParams(event);
-//		},
-//	    dayClick: function() {
-//           alert('a day has been click');
-//        },
-//		editable: false,
-//	    weekMode: 'liquid',
-//	    url:'#',
-//	    events: []
-//	});
-//	//$('#calendar').find('.fc-header-center').text('Holidays');
-//	
-//	$('#calendar').fullCalendar('today');
-//	$('#calendar').fullCalendar('render');
-//}
-
 function createCalendar() {	
 	$('#calendar').fullCalendar({
 		eventClick: function(event) {
@@ -341,7 +320,6 @@ function setEvents(holidayList){
 			event.color = "red";	
 		}
 				
-		console.log(event);
 		eventList[i] = event;
 		
 		$('#calendar').fullCalendar( 'renderEvent', event );	
