@@ -11,7 +11,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jersey.version>1.17.1</jersey.version>
+		<jersey.version>1.19.2</jersey.version>
 		<wtpversion>2.0</wtpversion>
 	</properties>
 
@@ -22,8 +22,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -61,12 +61,11 @@
 			<version>1.1</version>
 		</dependency>
 
-	
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-		</dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
 
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
