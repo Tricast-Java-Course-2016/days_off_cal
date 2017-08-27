@@ -8,6 +8,7 @@ import com.tricast.repositories.entities.AccountEntity;
 				  
 public interface AccountRepository extends CrudRepository<AccountEntity, Long>{
 
+	@Override
 	List<AccountEntity> findAll();
 	
 	AccountEntity findById(Long id);

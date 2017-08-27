@@ -12,13 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tricast.controllers.requests.LoginRequest;
 import com.tricast.controllers.responses.HolidayResponse;
-import com.tricast.managers.AccountManager;
 import com.tricast.managers.HolidayManager;
-import com.tricast.managers.beans.Account;
 import com.tricast.managers.beans.Holiday;
-import com.tricast.managers.beans.HolidayType;
 
 @RestController
 @RequestMapping(path = "/holidays")

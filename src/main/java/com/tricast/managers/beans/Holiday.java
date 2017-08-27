@@ -67,7 +67,7 @@ public class Holiday implements Serializable {
 		int result = 1;
 		result = prime * result + (int) (accountId ^ (accountId >>> 32));
 		result = prime * result
-				+ (int) (actualDayCount ^ (actualDayCount >>> 32));
+				+ (actualDayCount ^ (actualDayCount >>> 32));
 		result = prime * result + ((fromDay == null) ? 0 : fromDay.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((toDay == null) ? 0 : toDay.hashCode());

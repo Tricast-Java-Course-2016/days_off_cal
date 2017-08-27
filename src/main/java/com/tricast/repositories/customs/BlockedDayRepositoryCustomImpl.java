@@ -1,6 +1,7 @@
 package com.tricast.repositories.customs;
 
 import java.util.List;
+
 import org.springframework.data.jpa.repository.support.QueryDslRepositorySupport;
 import org.springframework.stereotype.Repository;
 

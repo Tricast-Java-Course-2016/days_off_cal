@@ -1,6 +1,5 @@
 package com.tricast.managers;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -13,10 +12,6 @@ public interface AccountManager {
 	Account getById(long id);
 
 	Account save(Account newAccount);
-
-//	Account update(Account updateAccount);
-
-//	boolean deleteById(long Id);
 
 	public Account login(String username, String password) throws SQLException;
 

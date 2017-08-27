@@ -3,7 +3,6 @@ package com.tricast.managers.mappers;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tricast.managers.beans.Account;
 import com.tricast.managers.beans.Holiday;
 import com.tricast.managers.beans.HolidayType;
 import com.tricast.repositories.entities.AccountEntity;

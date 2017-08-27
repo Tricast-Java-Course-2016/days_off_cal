@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.tricast.managers.beans.Holiday;
-import com.tricast.repositories.entities.BlockedDayEntity;
 
 public class HolidayHelper {
 
