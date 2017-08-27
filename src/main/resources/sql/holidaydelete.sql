@@ -1,4 +1,0 @@
-DELETE FROM 
-	/*=SCHEMA*/HOLIDAYS 
-WHERE 
-	ID = :id

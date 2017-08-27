@@ -15,7 +15,7 @@ BEGIN
 
 	CREATE TABLE calendar.accounts
 	  ( 
-	  id INTEGER NOT NULL, 
+	  id SERIAL NOT NULL, 
 	  username VARCHAR(30) NOT NULL, 
 	  password VARCHAR(30) NOT NULL, 
 	  realname VARCHAR(120) NOT NULL, 
@@ -28,7 +28,7 @@ BEGIN
 	
 	CREATE TABLE CALENDAR.BLOCKEDDAYS 
 	   (	
-	    id INTEGER NOT NULL, 
+	    id SERIAL NOT NULL, 
 	    day VARCHAR(8)
 	   );
 	   
@@ -36,7 +36,7 @@ BEGIN
 	
 	CREATE TABLE CALENDAR.HOLIDAYS 
 	   (	
-	    id INTEGER NOT NULL, 
+	    id SERIAL NOT NULL, 
 	    accountid INTEGER NOT NULL, 
 	    fromday VARCHAR(8) NOT NULL, 
 	    today VARCHAR(8) NOT NULL, 
