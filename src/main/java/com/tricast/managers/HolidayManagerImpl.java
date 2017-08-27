@@ -26,15 +26,13 @@ public class HolidayManagerImpl implements HolidayManager {
 	private final AccountRepository accountsRepository;
 	private final BlockedDaysRepository blockedDaysRepository;
 	private final HolidaysRepository holidayRepository;
-	private final BlockedDayRepositoryCustom blockedDayRepositoryCustom;
 	
 	@Autowired
 	public HolidayManagerImpl(AccountRepository accountsRepository, BlockedDaysRepository blockedDaysRepository,
-			HolidaysRepository holidayRepository, BlockedDayRepositoryCustom blockedDayRepositoryCustom) {
+			HolidaysRepository holidayRepository) {
 		this.accountsRepository = accountsRepository;
 		this.blockedDaysRepository = blockedDaysRepository;
 		this.holidayRepository = holidayRepository;
-		this.blockedDayRepositoryCustom = blockedDayRepositoryCustom;
 	}
 
 	@Override
@@ -47,7 +45,7 @@ public class HolidayManagerImpl implements HolidayManager {
 
 			if (!HolidayHelper.isOverlapping(currentHolidays, leave)) {
 
-				List<BlockedDayEntity> blockedDayEntities = blockedDaysRepository.findAll();
+				List<BlockedDayEntity> blockedDayEntities = blockedDaysRepository.getBlockedDays();
 
 				List<String> blockedDays = new ArrayList<>();
 				blockedDayEntities.forEach(item -> {

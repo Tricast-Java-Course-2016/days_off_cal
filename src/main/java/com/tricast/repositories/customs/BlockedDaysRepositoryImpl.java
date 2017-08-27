@@ -10,9 +10,9 @@ import com.tricast.repositories.entities.BlockedDayEntity;
 import com.tricast.repositories.entities.QBlockedDayEntity;
 
 @Repository
-public class BlockedDayRepositoryCustomImpl extends QueryDslRepositorySupport implements BlockedDayRepositoryCustom {
+public class BlockedDaysRepositoryImpl extends QueryDslRepositorySupport implements BlockedDayRepositoryCustom {
 
-    public BlockedDayRepositoryCustomImpl() {
+    public BlockedDaysRepositoryImpl() {
         super(BlockedDayEntity.class);
     }
 
