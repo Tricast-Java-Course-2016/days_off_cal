@@ -1,16 +1,17 @@
-package com.tricast.managers.beans;
+package com.tricast.controllers.requests;
 
 import java.io.Serializable;
 
-public class Holiday implements Serializable {
+import com.tricast.managers.beans.HolidayType;
 
-	private static final long serialVersionUID = 7441709506155843223L;
+public class HolidayRequest implements Serializable {
+
+	private static final long serialVersionUID = 7315468738416533833L;
 
 	private Long id;
 	private Long accountId;
 	private String fromDay;
 	private String toDay;
-	private Integer actualDayCount;
 	private HolidayType type;
 
 	public Long getId() {
@@ -29,14 +30,6 @@ public class Holiday implements Serializable {
 		this.accountId = accountId;
 	}
 
-	public String getToDay() {
-		return toDay;
-	}
-
-	public void setToDay(String toDay) {
-		this.toDay = toDay;
-	}
-
 	public String getFromDay() {
 		return fromDay;
 	}
@@ -45,12 +38,12 @@ public class Holiday implements Serializable {
 		this.fromDay = fromDay;
 	}
 
-	public Integer getActualDayCount() {
-		return actualDayCount;
+	public String getToDay() {
+		return toDay;
 	}
 
-	public void setActualDayCount(Integer actualDayCount) {
-		this.actualDayCount = actualDayCount;
+	public void setToDay(String toDay) {
+		this.toDay = toDay;
 	}
 
 	public HolidayType getType() {
@@ -61,13 +54,15 @@ public class Holiday implements Serializable {
 		this.type = type;
 	}
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (accountId ^ (accountId >>> 32));
-		result = prime * result
-				+ (actualDayCount ^ (actualDayCount >>> 32));
 		result = prime * result + ((fromDay == null) ? 0 : fromDay.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((toDay == null) ? 0 : toDay.hashCode());
@@ -83,10 +78,8 @@ public class Holiday implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Holiday other = (Holiday) obj;
+		HolidayRequest other = (HolidayRequest) obj;
 		if (accountId != other.accountId)
-			return false;
-		if (actualDayCount != other.actualDayCount)
 			return false;
 		if (fromDay == null) {
 			if (other.fromDay != null)
@@ -107,9 +100,8 @@ public class Holiday implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Leave [id=" + id + ", accountId=" + accountId + ", toDay="
-				+ toDay + ", fromDay=" + fromDay + ", actualDayCount="
-				+ actualDayCount + ", type=" + type + "]";
+		return "HolidayResponse [id=" + id + ", accountId=" + accountId + ", fromDay=" + fromDay + ", toDay=" + toDay
+				+ ", type=" + type + "]";
 	}
 
 }

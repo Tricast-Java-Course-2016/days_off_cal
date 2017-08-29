@@ -7,18 +7,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.tricast.controllers.requests.HolidayRequest;
 import com.tricast.controllers.responses.HolidayResponse;
-import com.tricast.managers.beans.Holiday;
 import com.tricast.managers.beans.HolidayType;
 import com.tricast.managers.helpers.HolidayHelper;
-import com.tricast.managers.mappers.HolidayMapper;
+import com.tricast.managers.mappers.HolidayRequestMapper;
+import com.tricast.managers.mappers.HolidayResponseMapper;
 import com.tricast.repositories.AccountRepository;
 import com.tricast.repositories.BlockedDaysRepository;
 import com.tricast.repositories.HolidaysRepository;
-import com.tricast.repositories.customs.BlockedDayRepositoryCustom;
-import com.tricast.repositories.entities.AccountEntity;
-import com.tricast.repositories.entities.BlockedDayEntity;
-import com.tricast.repositories.entities.HolidayEntity;
+import com.tricast.repositories.entities.Account;
+import com.tricast.repositories.entities.BlockedDay;
+import com.tricast.repositories.entities.Holiday;
 
 @Component
 public class HolidayManagerImpl implements HolidayManager {
@@ -36,26 +36,27 @@ public class HolidayManagerImpl implements HolidayManager {
 	}
 
 	@Override
-	public Holiday saveHoliday(Holiday leave) throws SQLException {
+	public Holiday saveHoliday(HolidayRequest request) throws SQLException {
 
 		// create
-		if (leave.getId() == null) {
-			List<Holiday> currentHolidays = HolidayMapper
-					.mapToBeanList(holidayRepository.findByAccount_id(leave.getAccountId()));
+		if (request.getId() == null) {
+				
+			Holiday leave = HolidayRequestMapper.mapToEntity(request, accountsRepository.findById(request.getAccountId()));
+			
+			List<Holiday> currentHolidays = holidayRepository.findByAccount_id(leave.getAccount().getId());
 
 			if (!HolidayHelper.isOverlapping(currentHolidays, leave)) {
 
-				List<BlockedDayEntity> blockedDayEntities = blockedDaysRepository.getBlockedDays();
+				List<BlockedDay> blockedDayEntities = blockedDaysRepository.getBlockedDays();
 
 				List<String> blockedDays = new ArrayList<>();
 				blockedDayEntities.forEach(item -> {
 					blockedDays.add(item.getDay());
 				});
 
-				leave.setActualDayCount(HolidayHelper.getActualNumberOfDaysForLeave(leave, blockedDays));
+				leave.setActualdaycount(HolidayHelper.getActualNumberOfDaysForLeave(leave, blockedDays));
 
-				AccountEntity account = accountsRepository.findById(leave.getAccountId());
-				return HolidayMapper.mapToBean(holidayRepository.save(HolidayMapper.mapToEntity(leave, account)));
+				return holidayRepository.save(leave);
 
 			} else {
 				throw new SQLException("The account already has a holiday planned for this period.");
@@ -69,13 +70,13 @@ public class HolidayManagerImpl implements HolidayManager {
 	public Holiday updateHolidayType(Long holidayId, HolidayType type) {
 		
 		// load holiday by id
-		HolidayEntity holiday = holidayRepository.findById(holidayId);
+		Holiday holiday = holidayRepository.findById(holidayId);
 		
 		// set to the given type
 		holiday.setType(type.getTypeId());
 		
 		// save it
-		return HolidayMapper.mapToBean(holidayRepository.save(holiday));
+		return holidayRepository.save(holiday);
 	}
 	
 	@Override
@@ -86,29 +87,18 @@ public class HolidayManagerImpl implements HolidayManager {
 	@Override
 	public List<HolidayResponse> getAllHolidays() {
 		
-		List<AccountEntity> accounts = accountsRepository.findAll();
+		List<Account> accounts = accountsRepository.findAll();
 		List<HolidayResponse> responses = new ArrayList<>();
 		
-		for (AccountEntity account : accounts) {
-			List<HolidayEntity> holidays = holidayRepository.findByAccount_id(account.getId());
-			
-			for (HolidayEntity holiday : holidays) {
-				HolidayResponse newResponse = new HolidayResponse();
-				newResponse.setAccountId(account.getId());
-				newResponse.setAccountRealName(account.getRealname());
-				newResponse.setFromDay(holiday.getFromday());
-				newResponse.setToDay(holiday.getToday());
-				newResponse.setActualDayCount(holiday.getActualdaycount());
-				newResponse.setType(HolidayType.getType(holiday.getType()));
-				newResponse.setId(holiday.getId());
-				responses.add(newResponse);
-			}
+		for (Account account : accounts) {
+			List<Holiday> holidays = holidayRepository.findByAccount_id(account.getId()); 	
+			responses.addAll(HolidayResponseMapper.mapToResponseList(holidays, account));
 		}
 		return responses;
 	}
 
 	@Override
 	public Holiday getById(long id) {
-		return HolidayMapper.mapToBean(holidayRepository.findById(id));
+		return holidayRepository.findById(id);
 	}
 }

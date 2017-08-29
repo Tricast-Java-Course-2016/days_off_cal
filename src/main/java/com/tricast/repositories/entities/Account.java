@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Accounts")
-public class AccountEntity implements Serializable {
+public class Account implements Serializable {
 
 	private static final long serialVersionUID = -3370075957769037307L;
 
@@ -26,13 +26,13 @@ public class AccountEntity implements Serializable {
     private String password;
 
     @Column(name = "realname")
-    private String realname;
+    private String realName;
 
     @Column(name = "daysoffperyear")
-    private Integer daysoffperyear;
+    private Integer daysOffPerYear;
 
     @Column(name = "sickleaveperyear")
-    private Integer sickleaveperyear;
+    private Integer sickLeavePerYear;
     
     public Long getId() {
         return id;
@@ -58,33 +58,33 @@ public class AccountEntity implements Serializable {
         this.password = password;
     }
 
-	public String getRealname() {
-		return realname;
+	public String getRealName() {
+		return realName;
 	}
 
-	public void setRealname(String realname) {
-		this.realname = realname;
+	public void setRealName(String realName) {
+		this.realName = realName;
 	}
 
-	public Integer getDaysoffperyear() {
-		return daysoffperyear;
+	public Integer getDaysOffPerYear() {
+		return daysOffPerYear;
 	}
 
-	public void setDaysoffperyear(Integer daysoffperyear) {
-		this.daysoffperyear = daysoffperyear;
+	public void setDaysOffPerYear(Integer daysOffPerYear) {
+		this.daysOffPerYear = daysOffPerYear;
 	}
 
-	public Integer getSickleaveperyear() {
-		return sickleaveperyear;
+	public Integer getSickLeavePerYear() {
+		return sickLeavePerYear;
 	}
 
-	public void setSickleaveperyear(Integer sickleaveperyear) {
-		this.sickleaveperyear = sickleaveperyear;
+	public void setSickLeavePerYear(Integer sickLeavePerYear) {
+		this.sickLeavePerYear = sickLeavePerYear;
 	}
 
 	@Override
 	public String toString() {
 		return "AccountEntity [id=" + id + ", userName=" + userName + ", password=" + password + ", realname="
-				+ realname + ", daysoffperyear=" + daysoffperyear + ", sickleaveperyear=" + sickleaveperyear + "]";
+				+ realName + ", daysoffperyear=" + daysOffPerYear + ", sickleaveperyear=" + sickLeavePerYear + "]";
 	}
 }

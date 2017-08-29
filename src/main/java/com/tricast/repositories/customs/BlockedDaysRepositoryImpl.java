@@ -6,22 +6,22 @@ import org.springframework.data.jpa.repository.support.QueryDslRepositorySupport
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.JPQLQuery;
-import com.tricast.repositories.entities.BlockedDayEntity;
-import com.tricast.repositories.entities.QBlockedDayEntity;
+import com.tricast.repositories.entities.BlockedDay;
+import com.tricast.repositories.entities.QBlockedDay;
 
 @Repository
 public class BlockedDaysRepositoryImpl extends QueryDslRepositorySupport implements BlockedDayRepositoryCustom {
 
     public BlockedDaysRepositoryImpl() {
-        super(BlockedDayEntity.class);
+        super(BlockedDay.class);
     }
 
 	@Override
-	public List<BlockedDayEntity> getBlockedDays() {
+	public List<BlockedDay> getBlockedDays() {
 		
-		QBlockedDayEntity blockedDay = QBlockedDayEntity.blockedDayEntity;
+		QBlockedDay blockedDay = QBlockedDay.blockedDay;
 		
-		JPQLQuery<BlockedDayEntity> query = from(blockedDay);
+		JPQLQuery<BlockedDay> query = from(blockedDay);
 	
 		return query.fetch();
 	}

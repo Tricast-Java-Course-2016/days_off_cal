@@ -3,16 +3,17 @@ package com.tricast.managers;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.tricast.managers.beans.Account;
+import com.tricast.controllers.responses.AccountResponse;
+import com.tricast.repositories.entities.Account;
 
 public interface AccountManager {
 
-	List<Account> getAll();
+	List<AccountResponse> getAll();
 
-	Account getById(long id);
+	AccountResponse getById(long id);
 
 	Account save(Account newAccount);
 
-	public Account login(String username, String password) throws SQLException;
+	AccountResponse login(String username, String password) throws SQLException;
 
 }

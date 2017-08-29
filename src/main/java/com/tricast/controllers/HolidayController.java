@@ -6,15 +6,20 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tricast.controllers.requests.HolidayRequest;
 import com.tricast.controllers.responses.HolidayResponse;
 import com.tricast.managers.HolidayManager;
-import com.tricast.managers.beans.Holiday;
+import com.tricast.repositories.entities.Holiday;
 
 @RestController
 @RequestMapping(path = "/holidays")
@@ -29,31 +34,31 @@ public class HolidayController {
 		this.holidayManager = holidayManager;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@GetMapping
 	public List<HolidayResponse> getHolidays() {
 		log.trace("Trying to get all holidays");
 		return holidayManager.getAllHolidays();
 	}
 
-	@RequestMapping(method = RequestMethod.GET, path = "/{id}")
+	@GetMapping("/{id}")
 	public Holiday getById(@PathVariable("id") long id) {
 		log.trace("Requested to get ID = " + id);
 		return holidayManager.getById(id);
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public Holiday createHoliday(@RequestBody Holiday holiday) throws SQLException {
+	@PostMapping
+	public Holiday createHoliday(@RequestBody HolidayRequest holiday) throws SQLException {
 		log.trace("Trying to create new holiday for account #" + holiday.getAccountId());
 		return holidayManager.saveHoliday(holiday);
 	}
 
-	@RequestMapping(method = RequestMethod.PUT)
-	public Holiday updateHoliday(@RequestBody Holiday holiday) {
+	@PutMapping
+	public Holiday updateHoliday(@RequestBody HolidayRequest holiday) {
 		log.trace("Trying to update a holiday for account #" + holiday.getAccountId());
 		return holidayManager.updateHolidayType(holiday.getId(), holiday.getType());
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
+	@DeleteMapping("/{id}")
 	public void deleteHoliday(@PathVariable("id") long id) {
 		log.trace("Trying to delete holiday #" + id);
 		holidayManager.deleteHoliday(id);

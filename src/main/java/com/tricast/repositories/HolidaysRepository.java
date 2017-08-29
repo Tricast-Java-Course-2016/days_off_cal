@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.tricast.repositories.entities.HolidayEntity;
+import com.tricast.repositories.entities.Holiday;
 
-public interface HolidaysRepository  extends CrudRepository<HolidayEntity, Long>  {
+public interface HolidaysRepository  extends CrudRepository<Holiday, Long>  {
 
 	@Override
-	List<HolidayEntity> findAll();
+	List<Holiday> findAll();
 	
-	List<HolidayEntity> findByAccount_id(Long id);
+	List<Holiday> findByAccount_id(Long id);
 
-	HolidayEntity findById(Long id);
+	Holiday findById(Long id);
 }

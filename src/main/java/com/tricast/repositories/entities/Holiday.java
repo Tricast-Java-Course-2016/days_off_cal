@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Holidays")
-public class HolidayEntity implements Serializable  {
+public class Holiday implements Serializable  {
 
 	private static final long serialVersionUID = 149087048970724608L;
 
@@ -23,7 +23,7 @@ public class HolidayEntity implements Serializable  {
 
     @ManyToOne
     @JoinColumn(name = "accountid")
-    private AccountEntity account;
+    private Account account;
 
     @Column(name = "fromday")
     private String fromday;
@@ -45,11 +45,11 @@ public class HolidayEntity implements Serializable  {
 		this.id = id;
 	}
 
-	public AccountEntity getAccount() {
+	public Account getAccount() {
 		return account;
 	}
 
-	public void setAccount(AccountEntity account) {
+	public void setAccount(Account account) {
 		this.account = account;
 	}
 

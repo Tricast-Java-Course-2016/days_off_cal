@@ -1,0 +1,43 @@
+package com.tricast.managers.mappers;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.tricast.controllers.responses.HolidayResponse;
+import com.tricast.managers.beans.HolidayType;
+import com.tricast.repositories.entities.Account;
+import com.tricast.repositories.entities.Holiday;
+
+public class HolidayResponseMapper {
+
+	public static HolidayResponse mapToResponse(Holiday entityObject, Account account) {
+
+		if (entityObject == null) {
+			return null;
+		}
+
+		HolidayResponse responseObject = new HolidayResponse();
+		responseObject.setId(entityObject.getId());
+		responseObject.setAccountId(entityObject.getAccount().getId());
+		responseObject.setActualDayCount(entityObject.getActualdaycount());
+		responseObject.setFromDay(entityObject.getFromday());
+		responseObject.setToDay(entityObject.getToday());
+		responseObject.setType(HolidayType.getType(entityObject.getType()));
+		responseObject.setAccountRealName(account.getRealName());
+		
+		return responseObject;
+	}
+	
+	public static List<HolidayResponse> mapToResponseList(List<Holiday> entityObjectsList, Account account) {
+
+		if (entityObjectsList == null) {
+			return null;
+		}
+
+		List<HolidayResponse> accountsBeanList = new ArrayList<>();
+
+		entityObjectsList.forEach(entity -> accountsBeanList.add(mapToResponse(entity, account)));
+
+		return accountsBeanList;
+	}
+}

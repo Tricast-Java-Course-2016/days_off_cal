@@ -2,9 +2,9 @@ package com.tricast.repositories.customs;
 
 import java.util.List;
 
-import com.tricast.repositories.entities.BlockedDayEntity;
+import com.tricast.repositories.entities.BlockedDay;
 
 public interface BlockedDayRepositoryCustom {
 
-    List<BlockedDayEntity> getBlockedDays();
+    List<BlockedDay> getBlockedDays();
 }

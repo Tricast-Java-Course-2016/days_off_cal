@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.tricast.repositories.entities.AccountEntity;
+import com.tricast.repositories.entities.Account;
 				  
-public interface AccountRepository extends CrudRepository<AccountEntity, Long>{
+public interface AccountRepository extends CrudRepository<Account, Long>{
 
 	@Override
-	List<AccountEntity> findAll();
+	List<Account> findAll();
 	
-	AccountEntity findById(Long id);
+	Account findById(Long id);
 	
 	// login
-	AccountEntity findByUserNameAndPassword(String username, String password);
+	Account findByUserNameAndPassword(String username, String password);
 }

@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "blockeddays")
-public class BlockedDayEntity implements Serializable  {
+public class BlockedDay implements Serializable  {
 
 	private static final long serialVersionUID = -6632079768279394060L;
 

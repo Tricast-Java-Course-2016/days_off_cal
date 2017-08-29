@@ -1,10 +1,13 @@
-package com.tricast.managers.beans;
+package com.tricast.controllers.responses;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Account implements Serializable {
+import com.tricast.managers.beans.HolidayType;
+import com.tricast.repositories.entities.Holiday;
+
+public class AccountResponse implements Serializable {
 
 	private static final long serialVersionUID = 6467389830725640940L;
 
@@ -14,15 +17,15 @@ public class Account implements Serializable {
 	private String realName;
 	private long daysOffPerYear;
 	private long sickLeavePerYear;
-	private List<Holiday> holidays = new ArrayList<Holiday>();
+	private List<Holiday> holidays = new ArrayList<>();
 	private long holidaysLeft;
 	private long sickLeavesLeft;
 
 	public long getHolidaysLeft() {
 		long left = this.daysOffPerYear;
 		for (Holiday holiday : this.holidays) {
-			if (holiday.getType() == HolidayType.DAYOFF) {
-				left -= holiday.getActualDayCount();
+			if (holiday.getType() == HolidayType.DAYOFF.getTypeId()) {
+				left -= holiday.getActualdaycount();
 			}
 		}
 		holidaysLeft = left;
@@ -32,8 +35,8 @@ public class Account implements Serializable {
 	public long getSickLeavesLeft() {
 		long left = this.sickLeavePerYear;
 		for (Holiday holiday : this.holidays) {
-			if (holiday.getType() == HolidayType.SICKLEAVE) {
-				left -= holiday.getActualDayCount();
+			if (holiday.getType() == HolidayType.SICKLEAVE.getTypeId()) {
+				left -= holiday.getActualdaycount();
 			}
 		}
 		sickLeavesLeft = left;
@@ -127,7 +130,7 @@ public class Account implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Account other = (Account) obj;
+		AccountResponse other = (AccountResponse) obj;
 		if (daysOffPerYear != other.daysOffPerYear)
 			return false;
 		if (holidays == null) {
