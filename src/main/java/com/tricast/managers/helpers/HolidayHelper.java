@@ -36,8 +36,8 @@ public class HolidayHelper {
 	public static int getActualNumberOfDaysForLeave(Holiday leave,
 			List<String> blockedDays) {
 		int actualDays = 0;
-		Calendar currentDay = convertDayStringToCalendar(leave.getFromday());
-		Calendar endDay = convertDayStringToCalendar(leave.getToday());
+		Calendar currentDay = convertDayStringToCalendar(leave.getFromDay());
+		Calendar endDay = convertDayStringToCalendar(leave.getToDay());
 		do {
 			if (blockedDays.contains(convertCalendarToDayString(currentDay))) {
 				currentDay.add(Calendar.DAY_OF_MONTH, 1);
@@ -55,12 +55,12 @@ public class HolidayHelper {
 
 	public static boolean isOverlapping(List<Holiday> holidays, Holiday newHoliday) {
 		boolean result = false;
-		Calendar newStart = convertDayStringToCalendar(newHoliday.getFromday());
-		Calendar newEnd = convertDayStringToCalendar(newHoliday.getToday());
+		Calendar newStart = convertDayStringToCalendar(newHoliday.getFromDay());
+		Calendar newEnd = convertDayStringToCalendar(newHoliday.getToDay());
 		for (Holiday oldHoliday : holidays) {
 			Calendar oldStart = convertDayStringToCalendar(oldHoliday
-					.getFromday());
-			Calendar oldEnd = convertDayStringToCalendar(oldHoliday.getToday());
+					.getFromDay());
+			Calendar oldEnd = convertDayStringToCalendar(oldHoliday.getToDay());
 			if (!((newStart.before(oldStart) && newEnd.before(oldStart)) || (newStart
 					.after(oldEnd) && newEnd.after(oldEnd)))) {
 				result = true;

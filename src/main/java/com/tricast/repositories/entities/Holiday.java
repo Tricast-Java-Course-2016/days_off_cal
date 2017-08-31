@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Data;
+
+@Data
 @Entity
 @Table(name = "Holidays")
 public class Holiday implements Serializable  {
@@ -26,68 +29,14 @@ public class Holiday implements Serializable  {
     private Account account;
 
     @Column(name = "fromday")
-    private String fromday;
+    private String fromDay;
     
     @Column(name = "today")
-    private String today;
+    private String toDay;
     
     @Column(name = "type")
     private Long type;
     
     @Column(name = "actualdaycount")
-    private Integer actualdaycount;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Account getAccount() {
-		return account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
-	public String getFromday() {
-		return fromday;
-	}
-
-	public void setFromday(String fromday) {
-		this.fromday = fromday;
-	}
-
-	public String getToday() {
-		return today;
-	}
-
-	public void setToday(String today) {
-		this.today = today;
-	}
-
-	public Long getType() {
-		return type;
-	}
-
-	public void setType(Long type) {
-		this.type = type;
-	}
-
-	public Integer getActualdaycount() {
-		return actualdaycount;
-	}
-
-	public void setActualdaycount(Integer actualdaycount) {
-		this.actualdaycount = actualdaycount;
-	}
-
-	@Override
-	public String toString() {
-		return "HolidayEntity [id=" + id + ", account=" + account + ", fromday=" + fromday + ", today=" + today
-				+ ", type=" + type + ", actualdaycount=" + actualdaycount + "]";
-	}
+    private Integer actualDayCount;
 }

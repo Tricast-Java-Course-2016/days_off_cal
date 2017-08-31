@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tricast.controllers.requests.HolidayRequest;
@@ -36,31 +35,42 @@ public class HolidayController {
 
 	@GetMapping
 	public List<HolidayResponse> getHolidays() {
+		
 		log.trace("Trying to get all holidays");
+		
 		return holidayManager.getAllHolidays();
 	}
 
 	@GetMapping("/{id}")
 	public Holiday getById(@PathVariable("id") long id) {
+		
 		log.trace("Requested to get ID = " + id);
+		
 		return holidayManager.getById(id);
 	}
 
 	@PostMapping
-	public Holiday createHoliday(@RequestBody HolidayRequest holiday) throws SQLException {
+	public HolidayResponse createHoliday(@RequestBody HolidayRequest holiday) throws SQLException {
+		
 		log.trace("Trying to create new holiday for account #" + holiday.getAccountId());
-		return holidayManager.saveHoliday(holiday);
+		
+		return holidayManager.createHoliday(holiday);
 	}
 
 	@PutMapping
-	public Holiday updateHoliday(@RequestBody HolidayRequest holiday) {
+	public HolidayResponse updateHoliday(@RequestBody HolidayRequest holiday) {
+		
 		log.trace("Trying to update a holiday for account #" + holiday.getAccountId());
+		
 		return holidayManager.updateHolidayType(holiday.getId(), holiday.getType());
 	}
 
 	@DeleteMapping("/{id}")
-	public void deleteHoliday(@PathVariable("id") long id) {
+	public Boolean deleteHoliday(@PathVariable("id") long id) {
+		
 		log.trace("Trying to delete holiday #" + id);
+		
 		holidayManager.deleteHoliday(id);
+		return true;
 	}
 }

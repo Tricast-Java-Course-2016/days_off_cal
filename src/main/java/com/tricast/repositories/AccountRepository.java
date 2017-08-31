@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 import com.tricast.repositories.entities.Account;
+import com.tricast.repositories.entities.embded.Username;
 				  
 public interface AccountRepository extends CrudRepository<Account, Long>{
 
@@ -14,5 +15,5 @@ public interface AccountRepository extends CrudRepository<Account, Long>{
 	Account findById(Long id);
 	
 	// login
-	Account findByUserNameAndPassword(String username, String password);
+	Account findByUserName(Username username);
 }

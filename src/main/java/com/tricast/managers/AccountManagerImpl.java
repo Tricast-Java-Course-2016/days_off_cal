@@ -3,30 +3,35 @@ package com.tricast.managers;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.tricast.controllers.requests.AccountRequest;
 import com.tricast.controllers.responses.AccountResponse;
+import com.tricast.managers.mappers.AccountRequestMapper;
 import com.tricast.managers.mappers.AccountResponseMapper;
 import com.tricast.repositories.AccountRepository;
 import com.tricast.repositories.HolidaysRepository;
 import com.tricast.repositories.entities.Account;
-import com.tricast.repositories.hibernate.AccountRepositoryHibernate;
+import com.tricast.repositories.entities.embded.Username;
 
 @Component
+@Transactional
 public class AccountManagerImpl implements AccountManager {
 
 	private final AccountRepository accountsRepository;
 	private final HolidaysRepository holidayRepository;
 
-	private final AccountRepositoryHibernate accountRepositoryHibernate;
-
+	private final PasswordEncoder encoder;
+	
 	@Autowired
-	public AccountManagerImpl(AccountRepository accountsRepository, HolidaysRepository holidayRepository,
-			AccountRepositoryHibernate accountRepositoryHibernate) {
+	public AccountManagerImpl(AccountRepository accountsRepository, HolidaysRepository holidayRepository, PasswordEncoder encoder) {
 		this.accountsRepository = accountsRepository;
 		this.holidayRepository = holidayRepository;
-		this.accountRepositoryHibernate = accountRepositoryHibernate;
+		this.encoder = encoder;
 	}
 
 	@Override
@@ -49,26 +54,37 @@ public class AccountManagerImpl implements AccountManager {
 	}
 
 	@Override
-	public Account save(Account newAccount) {
-		return accountsRepository.save(newAccount);
+	public AccountResponse createAccount(AccountRequest accountRequest) {
+	
+		Account account = AccountRequestMapper.mapToEntity(accountRequest, new Account());	
+		account.setPassword(encoder.encode(accountRequest.getPassword()));
+		
+		return AccountResponseMapper.mapToResponse(accountsRepository.save(account));
 	}
-
-	// @Override
-	// public boolean deleteById(long Id) throws SQLException, IOException {
-	// return accountDao.deleteById(workspace, Id);
-	// }
+	
+	@Override
+	public AccountResponse updateAccount(AccountRequest accountRequest) {
+		
+		Account accountToUpdate = accountsRepository.findById(accountRequest.getId());
+		AccountRequestMapper.mapToEntity(accountRequest, accountToUpdate);		
+		
+		// update the password if necessary
+		if(!encoder.matches(accountRequest.getPassword(), accountToUpdate.getPassword())) {
+			accountToUpdate.setPassword(encoder.encode(accountRequest.getPassword()));
+		}
+		
+		return AccountResponseMapper.mapToResponse(accountToUpdate);
+	}
 
 	@Override
 	public AccountResponse login(String username, String password) throws SQLException {
 
-		// try out Hibernate stuff
-		// AccountEntity foundAccountEntity =
-		// accountsRepository.findByUserNameAndPassword(username, password);
-
-		Account foundAccountEntity = accountRepositoryHibernate.login(username, password);
-
-		if (foundAccountEntity == null) {
-			throw new SQLException("No account exists with the specified username:" + username);
+		Username usernameObject = new Username(username);		
+		
+		Account foundAccountEntity = accountsRepository.findByUserName(usernameObject);
+		
+		if(foundAccountEntity == null || !encoder.matches(password, foundAccountEntity.getPassword())) {
+			throw new SQLException("Wrong username or password: " + username);
 		}
 
 		AccountResponse account = AccountResponseMapper.mapToResponse(foundAccountEntity);
@@ -76,5 +92,4 @@ public class AccountManagerImpl implements AccountManager {
 
 		return account;
 	}
-
 }

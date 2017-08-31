@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,7 @@ import com.tricast.repositories.entities.BlockedDay;
 import com.tricast.repositories.entities.Holiday;
 
 @Component
+@Transactional
 public class HolidayManagerImpl implements HolidayManager {
 
 	private final AccountRepository accountsRepository;
@@ -36,12 +39,12 @@ public class HolidayManagerImpl implements HolidayManager {
 	}
 
 	@Override
-	public Holiday saveHoliday(HolidayRequest request) throws SQLException {
+	public HolidayResponse createHoliday(HolidayRequest request) throws SQLException {
 
 		// create
 		if (request.getId() == null) {
 				
-			Holiday leave = HolidayRequestMapper.mapToEntity(request, accountsRepository.findById(request.getAccountId()));
+			Holiday leave = HolidayRequestMapper.mapToEntity(request, new Holiday(), accountsRepository.findById(request.getAccountId()));
 			
 			List<Holiday> currentHolidays = holidayRepository.findByAccount_id(leave.getAccount().getId());
 
@@ -54,9 +57,9 @@ public class HolidayManagerImpl implements HolidayManager {
 					blockedDays.add(item.getDay());
 				});
 
-				leave.setActualdaycount(HolidayHelper.getActualNumberOfDaysForLeave(leave, blockedDays));
+				leave.setActualDayCount(HolidayHelper.getActualNumberOfDaysForLeave(leave, blockedDays));
 
-				return holidayRepository.save(leave);
+				return HolidayResponseMapper.mapToResponse(holidayRepository.save(leave), null);
 
 			} else {
 				throw new SQLException("The account already has a holiday planned for this period.");
@@ -67,7 +70,7 @@ public class HolidayManagerImpl implements HolidayManager {
 	}
 
 	@Override
-	public Holiday updateHolidayType(Long holidayId, HolidayType type) {
+	public HolidayResponse updateHolidayType(Long holidayId, HolidayType type) {
 		
 		// load holiday by id
 		Holiday holiday = holidayRepository.findById(holidayId);
@@ -75,8 +78,7 @@ public class HolidayManagerImpl implements HolidayManager {
 		// set to the given type
 		holiday.setType(type.getTypeId());
 		
-		// save it
-		return holidayRepository.save(holiday);
+		return HolidayResponseMapper.mapToResponse(holiday, null);
 	}
 	
 	@Override

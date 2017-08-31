@@ -19,11 +19,15 @@ public class HolidayResponseMapper {
 		HolidayResponse responseObject = new HolidayResponse();
 		responseObject.setId(entityObject.getId());
 		responseObject.setAccountId(entityObject.getAccount().getId());
-		responseObject.setActualDayCount(entityObject.getActualdaycount());
-		responseObject.setFromDay(entityObject.getFromday());
-		responseObject.setToDay(entityObject.getToday());
+		responseObject.setActualDayCount(entityObject.getActualDayCount());
+		responseObject.setFromDay(entityObject.getFromDay());
+		responseObject.setToDay(entityObject.getToDay());
 		responseObject.setType(HolidayType.getType(entityObject.getType()));
-		responseObject.setAccountRealName(account.getRealName());
+		
+		if(account != null) {
+			responseObject.setAccountRealName(account.getRealName());
+		}
+		
 		
 		return responseObject;
 	}

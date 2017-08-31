@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tricast.controllers.requests.AccountRequest;
 import com.tricast.controllers.requests.LoginRequest;
 import com.tricast.controllers.responses.AccountResponse;
 import com.tricast.managers.AccountManager;
-import com.tricast.repositories.entities.Account;
 
 @RestController
 @RequestMapping(path = "/accounts")
@@ -35,31 +35,41 @@ public class AccountController {
 	
     @GetMapping
 	public List<AccountResponse> getAll() {
-		log.trace("Requested to get All");
-		return accountManager.getAll();
+		
+    	log.trace("Requested to get All");
+		
+    	return accountManager.getAll();
 	}
     
 	@GetMapping("/{id}")
 	public AccountResponse getById(@PathVariable("id") long id) {
+		
 		log.trace("Requested to get ID = " + id);
+		
 		return accountManager.getById(id);
 	}
 	
 	@PostMapping
-	public Account createAccount(@RequestBody Account newAccount) {
+	public AccountResponse createAccount(@RequestBody AccountRequest newAccount) {
+		
 		log.trace("Trying to create or update account for " + newAccount.getRealName());
-		return accountManager.save(newAccount);
+		
+		return accountManager.createAccount(newAccount);
 	}
 	
 	@PutMapping
-	public Account updateAccount(@RequestBody Account newAccount) {
-		log.trace("Trying to update account for " + newAccount.getRealName());
-		return accountManager.save(newAccount);
+	public AccountResponse updateAccount(@RequestBody AccountRequest account) {
+		
+		log.trace("Trying to update account for " + account.getRealName());
+		
+		return accountManager.updateAccount(account);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path = "/login")
 	public AccountResponse login(@RequestBody LoginRequest loginRequest) throws SQLException {
+		
 		log.trace("Trying to login with account for " + loginRequest.getUserName());
+		
 		return accountManager.login(loginRequest.getUserName(), loginRequest.getPassword());
 	}
 }

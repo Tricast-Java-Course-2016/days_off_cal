@@ -14,14 +14,15 @@ public class AccountResponseMapper {
             return null;
         }
 
-        AccountResponse reponseObject = new AccountResponse();
-        reponseObject.setId(entityObject.getId());
-        reponseObject.setUserName(entityObject.getUserName());
-        reponseObject.setRealName(entityObject.getRealName());
-        reponseObject.setDaysOffPerYear(entityObject.getDaysOffPerYear());
-        reponseObject.setSickLeavePerYear(entityObject.getSickLeavePerYear());
+        AccountResponse responseObject = new AccountResponse();
+        responseObject.setId(entityObject.getId());
+        responseObject.setUserName(entityObject.getUserName().toString());
+        responseObject.setPassword(entityObject.getPassword().toString());
+        responseObject.setRealName(entityObject.getRealName());
+        responseObject.setDaysOffPerYear(entityObject.getDaysOffPerYear());
+        responseObject.setSickLeavePerYear(entityObject.getSickLeavePerYear());
 
-        return reponseObject;
+        return responseObject;
     }
 
     public static List<AccountResponse> mapToBeanList(List<Account> entityObjectsList) {

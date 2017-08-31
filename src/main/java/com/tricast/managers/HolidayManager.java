@@ -10,9 +10,9 @@ import com.tricast.repositories.entities.Holiday;
 
 public interface HolidayManager {
 
-	Holiday saveHoliday(HolidayRequest leave) throws SQLException;
+	HolidayResponse createHoliday(HolidayRequest leave) throws SQLException;
 
-	Holiday updateHolidayType(Long holidayId, HolidayType type);
+	HolidayResponse updateHolidayType(Long holidayId, HolidayType type);
 	
 	void deleteHoliday(long leaveId);
 

@@ -17,7 +17,7 @@ BEGIN
 	  ( 
 	  id SERIAL NOT NULL, 
 	  username VARCHAR(30) NOT NULL, 
-	  password VARCHAR(30) NOT NULL, 
+	  password VARCHAR(60) NOT NULL, 
 	  realname VARCHAR(120) NOT NULL, 
 	  daysoffperyear INTEGER NOT NULL, 
 	  sickleaveperyear INTEGER NOT NULL,
