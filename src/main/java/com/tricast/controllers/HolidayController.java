@@ -51,7 +51,7 @@ public class HolidayController {
 	}
 
 	@PostMapping
-	public ResponseEntity createHoliday(@RequestBody HolidayRequest holiday) {
+	public ResponseEntity<?> createHoliday(@RequestBody HolidayRequest holiday) {
 
 		log.trace("Trying to create new holiday for account #" + holiday.getAccountId());
 

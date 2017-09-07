@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.tricast.controllers.requests.AccountRequest;
 import com.tricast.controllers.responses.AccountResponse;
@@ -26,9 +27,10 @@ public class AccountManagerImpl implements AccountManager {
 	private final HolidaysRepository holidayRepository;
 
 	private final PasswordEncoder encoder;
-	
+
 	@Autowired
-	public AccountManagerImpl(AccountRepository accountsRepository, HolidaysRepository holidayRepository, PasswordEncoder encoder) {
+	public AccountManagerImpl(AccountRepository accountsRepository, HolidaysRepository holidayRepository,
+			PasswordEncoder encoder) {
 		this.accountsRepository = accountsRepository;
 		this.holidayRepository = holidayRepository;
 		this.encoder = encoder;
@@ -55,35 +57,36 @@ public class AccountManagerImpl implements AccountManager {
 
 	@Override
 	public AccountResponse createAccount(AccountRequest accountRequest) {
-	
-		Account account = AccountRequestMapper.mapToEntity(accountRequest, new Account());	
+
+		Account account = AccountRequestMapper.mapToEntity(accountRequest, new Account());
 		account.setPassword(encoder.encode(accountRequest.getPassword()));
-		
+
 		return AccountResponseMapper.mapToResponse(accountsRepository.save(account));
 	}
-	
+
 	@Override
 	public AccountResponse updateAccount(AccountRequest accountRequest) {
-		
+
 		Account accountToUpdate = accountsRepository.findById(accountRequest.getId());
-		AccountRequestMapper.mapToEntity(accountRequest, accountToUpdate);		
-		
+		AccountRequestMapper.mapToEntity(accountRequest, accountToUpdate);
+
 		// update the password if necessary
-		if(!encoder.matches(accountRequest.getPassword(), accountToUpdate.getPassword())) {
+		if (!StringUtils.isEmpty(accountRequest.getPassword())
+				&& !encoder.matches(accountRequest.getPassword(), accountToUpdate.getPassword())) {
 			accountToUpdate.setPassword(encoder.encode(accountRequest.getPassword()));
 		}
-		
+
 		return AccountResponseMapper.mapToResponse(accountToUpdate);
 	}
 
 	@Override
 	public AccountResponse login(String username, String password) throws SQLException {
 
-		Username usernameObject = new Username(username);		
-		
+		Username usernameObject = new Username(username);
+
 		Account foundAccountEntity = accountsRepository.findByUserName(usernameObject);
-		
-		if(foundAccountEntity == null || !encoder.matches(password, foundAccountEntity.getPassword())) {
+
+		if (foundAccountEntity == null || !encoder.matches(password, foundAccountEntity.getPassword())) {
 			throw new SQLException("Wrong username or password: " + username);
 		}
 

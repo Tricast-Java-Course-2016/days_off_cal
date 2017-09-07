@@ -51,11 +51,16 @@ public class AccountController {
 	}
 	
 	@PostMapping
-	public AccountResponse createAccount(@RequestBody AccountRequest newAccount) {
+	public ResponseEntity<?> createAccount(@RequestBody AccountRequest newAccount) {
 		
 		log.trace("Trying to create or update account for " + newAccount.getRealName());
 		
-		return accountManager.createAccount(newAccount);
+		try {
+			AccountResponse account = accountManager.createAccount(newAccount);
+			return ResponseEntity.ok(account);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
 	
 	@PutMapping
@@ -67,7 +72,7 @@ public class AccountController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path = "/login")
-	public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
 		
 		log.trace("Trying to login with account for " + loginRequest.getUserName());
 		
