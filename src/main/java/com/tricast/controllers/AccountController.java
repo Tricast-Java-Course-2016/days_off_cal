@@ -1,11 +1,12 @@
 package com.tricast.controllers;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,10 +67,15 @@ public class AccountController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path = "/login")
-	public AccountResponse login(@RequestBody LoginRequest loginRequest) throws SQLException {
+	public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
 		
 		log.trace("Trying to login with account for " + loginRequest.getUserName());
 		
-		return accountManager.login(loginRequest.getUserName(), loginRequest.getPassword());
+		try {
+			AccountResponse account = accountManager.login(loginRequest.getUserName(), loginRequest.getPassword());
+			return ResponseEntity.ok(account);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
 }

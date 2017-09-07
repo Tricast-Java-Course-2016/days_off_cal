@@ -1,11 +1,12 @@
 package com.tricast.controllers;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,41 +36,46 @@ public class HolidayController {
 
 	@GetMapping
 	public List<HolidayResponse> getHolidays() {
-		
+
 		log.trace("Trying to get all holidays");
-		
+
 		return holidayManager.getAllHolidays();
 	}
 
 	@GetMapping("/{id}")
 	public Holiday getById(@PathVariable("id") long id) {
-		
+
 		log.trace("Requested to get ID = " + id);
-		
+
 		return holidayManager.getById(id);
 	}
 
 	@PostMapping
-	public HolidayResponse createHoliday(@RequestBody HolidayRequest holiday) throws SQLException {
-		
+	public ResponseEntity createHoliday(@RequestBody HolidayRequest holiday) {
+
 		log.trace("Trying to create new holiday for account #" + holiday.getAccountId());
-		
-		return holidayManager.createHoliday(holiday);
+
+		try {
+			HolidayResponse createdHoliday = holidayManager.createHoliday(holiday);
+			return ResponseEntity.ok(createdHoliday);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
 
 	@PutMapping
 	public HolidayResponse updateHoliday(@RequestBody HolidayRequest holiday) {
-		
+
 		log.trace("Trying to update a holiday for account #" + holiday.getAccountId());
-		
+
 		return holidayManager.updateHolidayType(holiday.getId(), holiday.getType());
 	}
 
 	@DeleteMapping("/{id}")
 	public Boolean deleteHoliday(@PathVariable("id") long id) {
-		
+
 		log.trace("Trying to delete holiday #" + id);
-		
+
 		holidayManager.deleteHoliday(id);
 		return true;
 	}

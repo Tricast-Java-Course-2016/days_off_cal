@@ -20,7 +20,4 @@ public enum HolidayType {
 	{
 		return id == 1 ? DAYOFF : SICKLEAVE;
 	}
-	
-	
-	
 }

@@ -100,7 +100,7 @@ function assignActions() {
 
 //--------Account functions-------
 function login(user, pwd) {
-	var url = "/accounts/login";
+	var url = "/days-off-calendar/accounts/login";
 	var request = {};
 	request.userName = user;
 	request.password = pwd;
@@ -108,7 +108,7 @@ function login(user, pwd) {
 	 	function(data, textStatus, xhr ) {
 			setAccountInfo(data);
 			
-			var url = "/holidays";
+			var url = "/days-off-calendar/holidays";
 			sendAjax("GET", url, null, 
 			 	function(data) {
 					holidays = data;
@@ -128,7 +128,7 @@ function saveAccount() {
 	var account = getAccountParams();
 	
 	var method = "PUT";
-	var url = "/accounts";
+	var url = "/days-off-calendar/accounts";
 	if(account.id === null || account.id === undefined){
 		method = "POST";
 	}
@@ -173,7 +173,7 @@ function saveHoliday() {
 	var holiday = getHolidayParams();
 	
 	var method = "PUT";
-	var url = "/holidays";
+	var url = "/days-off-calendar/holidays";
 	if(holiday.id === null || holiday.id === undefined){
 		method = "POST";
 	}
@@ -190,7 +190,7 @@ function saveHoliday() {
 
 function deleteHoliday() {
 	var method = "DELETE";
-	var url = "/holidays/" + selectedHolidayId;
+	var url = "/days-off-calendar/holidays/" + selectedHolidayId;
 	sendAjax(method, url, null, 
 	 	function(data, textStatus, xhr ) {
 			reloadHolidayAndAccountData(true);
@@ -202,7 +202,7 @@ function deleteHoliday() {
 }
 
 function reloadHolidayAndAccountData(afterDelete) {
-	var url = "/holidays";
+	var url = "/days-off-calendar/holidays";
 	sendAjax("GET", url, null, 
 	 	function(data) {
 			holidays = data;
@@ -214,7 +214,7 @@ function reloadHolidayAndAccountData(afterDelete) {
 			showSaveInfo(false, getErrorMsg(xhr), afterDelete);
 		}
 	);
-	var url = "/accounts/" + loggedInAccount.id;
+	var url = "/days-off-calendar/accounts/" + loggedInAccount.id;
 	sendAjax("GET", url, null, 
 	 	function(data) {
 			setAccountInfo(data);
