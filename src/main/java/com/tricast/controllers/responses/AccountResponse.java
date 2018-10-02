@@ -11,7 +11,7 @@ public class AccountResponse implements Serializable {
 
 	private static final long serialVersionUID = 6467389830725640940L;
 
-//	private Long id;
+	private Long id;
 	private String userName;
 	private String password;
 	private String realName;
@@ -43,13 +43,13 @@ public class AccountResponse implements Serializable {
 		return sickLeavesLeft;
 	}
 
-//	public Long getId() {
-//		return id;
-//	}
-//
-//	public void setId(Long id) {
-//		this.id = id;
-//	}
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getUserName() {
 		return userName;
@@ -114,7 +114,7 @@ public class AccountResponse implements Serializable {
 		result = prime * result + (int) (daysOffPerYear ^ (daysOffPerYear >>> 32));
 		result = prime * result + ((holidays == null) ? 0 : holidays.hashCode());
 		result = prime * result + (int) (holidaysLeft ^ (holidaysLeft >>> 32));
-//		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((realName == null) ? 0 : realName.hashCode());
 		result = prime * result + (int) (sickLeavePerYear ^ (sickLeavePerYear >>> 32));
@@ -123,56 +123,56 @@ public class AccountResponse implements Serializable {
 		return result;
 	}
 
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (this == obj)
-//			return true;
-//		if (obj == null)
-//			return false;
-//		if (getClass() != obj.getClass())
-//			return false;
-//		AccountResponse other = (AccountResponse) obj;
-//		if (daysOffPerYear != other.daysOffPerYear)
-//			return false;
-//		if (holidays == null) {
-//			if (other.holidays != null)
-//				return false;
-//		} else if (!holidays.equals(other.holidays))
-//			return false;
-//		if (holidaysLeft != other.holidaysLeft)
-//			return false;
-//		if (id == null) {
-//			if (other.id != null)
-//				return false;
-//		} else if (!id.equals(other.id))
-//			return false;
-//		if (password == null) {
-//			if (other.password != null)
-//				return false;
-//		} else if (!password.equals(other.password))
-//			return false;
-//		if (realName == null) {
-//			if (other.realName != null)
-//				return false;
-//		} else if (!realName.equals(other.realName))
-//			return false;
-//		if (sickLeavePerYear != other.sickLeavePerYear)
-//			return false;
-//		if (sickLeavesLeft != other.sickLeavesLeft)
-//			return false;
-//		if (userName == null) {
-//			if (other.userName != null)
-//				return false;
-//		} else if (!userName.equals(other.userName))
-//			return false;
-//		return true;
-//	}
-//
-//	@Override
-//	public String toString() {
-//		return "AccountResponse [id=" + id + ", userName=" + userName + ", password=" + password + ", realName="
-//				+ realName + ", daysOffPerYear=" + daysOffPerYear + ", sickLeavePerYear=" + sickLeavePerYear
-//				+ ", holidays=" + holidays + ", holidaysLeft=" + holidaysLeft + ", sickLeavesLeft=" + sickLeavesLeft
-//				+ "]";
-//	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AccountResponse other = (AccountResponse) obj;
+		if (daysOffPerYear != other.daysOffPerYear)
+			return false;
+		if (holidays == null) {
+			if (other.holidays != null)
+				return false;
+		} else if (!holidays.equals(other.holidays))
+			return false;
+		if (holidaysLeft != other.holidaysLeft)
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (password == null) {
+			if (other.password != null)
+				return false;
+		} else if (!password.equals(other.password))
+			return false;
+		if (realName == null) {
+			if (other.realName != null)
+				return false;
+		} else if (!realName.equals(other.realName))
+			return false;
+		if (sickLeavePerYear != other.sickLeavePerYear)
+			return false;
+		if (sickLeavesLeft != other.sickLeavesLeft)
+			return false;
+		if (userName == null) {
+			if (other.userName != null)
+				return false;
+		} else if (!userName.equals(other.userName))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "AccountResponse [id=" + id + ", userName=" + userName + ", password=" + password + ", realName="
+				+ realName + ", daysOffPerYear=" + daysOffPerYear + ", sickLeavePerYear=" + sickLeavePerYear
+				+ ", holidays=" + holidays + ", holidaysLeft=" + holidaysLeft + ", sickLeavesLeft=" + sickLeavesLeft
+				+ "]";
+	}
 }
